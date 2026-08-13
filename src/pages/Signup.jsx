@@ -1,6 +1,43 @@
+import { useState } from 'react'
+import { supabase } from '../lib/supabase'
+
 function Signup() {
-  function handleSubmit(event) {
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [message, setMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(event) {
     event.preventDefault()
+    setLoading(true)
+    setMessage('')
+    setErrorMessage('')
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    })
+
+    if (error) {
+      setErrorMessage(error.message)
+      setLoading(false)
+      return
+    }
+
+    setMessage(
+      'Account created! Check your email and click the confirmation link.'
+    )
+    setFullName('')
+    setEmail('')
+    setPassword('')
+    setLoading(false)
   }
 
   return (
@@ -29,8 +66,9 @@ function Signup() {
 
             <input
               id="fullName"
-              name="fullName"
               type="text"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
               placeholder="Pradeep Kumar"
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
@@ -47,8 +85,9 @@ function Signup() {
 
             <input
               id="email"
-              name="email"
               type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               placeholder="student@example.com"
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
@@ -65,8 +104,9 @@ function Signup() {
 
             <input
               id="password"
-              name="password"
               type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="Minimum 8 characters"
               minLength="8"
               required
@@ -74,11 +114,24 @@ function Signup() {
             />
           </div>
 
+          {errorMessage && (
+            <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">
+              {errorMessage}
+            </p>
+          )}
+
+          {message && (
+            <p className="rounded-lg bg-green-500/10 p-3 text-sm text-green-400">
+              {message}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full rounded-xl bg-indigo-500 px-4 py-3 font-semibold text-white hover:bg-indigo-400"
+            disabled={loading}
+            className="w-full rounded-xl bg-indigo-500 px-4 py-3 font-semibold text-white hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Create Account
+            {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 

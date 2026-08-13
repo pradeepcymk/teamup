@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 function Home() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
@@ -16,13 +17,19 @@ function Home() {
         </p>
 
         <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-          <button className="rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white hover:bg-indigo-400">
-            Find a Team
-          </button>
+          <Link
+  to="/teams"
+  className="rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white hover:bg-indigo-400"
+>
+  Find a Team
+</Link>
 
-          <button className="rounded-xl border border-slate-600 px-6 py-3 font-semibold text-white hover:border-indigo-400">
-            Create a Team
-          </button>
+          <Link
+  to="/create-team"
+  className="rounded-xl border border-slate-600 px-6 py-3 font-semibold text-white hover:border-indigo-400"
+>
+  Create a Team
+</Link>
         </div>
       </section>
     </main>

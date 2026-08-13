@@ -1,6 +1,33 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+
 function Login() {
-  function handleSubmit(event) {
+  const navigate = useNavigate()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(event) {
     event.preventDefault()
+    setLoading(true)
+    setErrorMessage('')
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      setErrorMessage(error.message)
+      setLoading(false)
+      return
+    }
+
+    setLoading(false)
+    navigate('/teams')
   }
 
   return (
@@ -29,8 +56,9 @@ function Login() {
 
             <input
               id="email"
-              name="email"
               type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               placeholder="student@example.com"
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
@@ -47,19 +75,27 @@ function Login() {
 
             <input
               id="password"
-              name="password"
               type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
             />
           </div>
 
+          {errorMessage && (
+            <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">
+              {errorMessage}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full rounded-xl bg-indigo-500 px-4 py-3 font-semibold text-white hover:bg-indigo-400"
+            disabled={loading}
+            className="w-full rounded-xl bg-indigo-500 px-4 py-3 font-semibold text-white hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Log In
+            {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
