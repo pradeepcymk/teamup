@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 const benefits = [
   {
@@ -22,6 +23,21 @@ const benefits = [
 ]
 
 function Home() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (!location.hash) {
+      window.scrollTo({ top: 0 })
+      return
+    }
+
+    const section = document.getElementById(location.hash.slice(1))
+
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [location.hash])
+
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 px-6 pb-20 pt-32 text-white md:px-12">
       <section className="relative mx-auto flex min-h-[70vh] max-w-7xl items-center">
@@ -109,20 +125,46 @@ function Home() {
 
       <section
         id="why-shippact"
-        className="mx-auto max-w-7xl scroll-mt-28 rounded-3xl border border-indigo-400/20 bg-indigo-500/10 px-6 py-12 text-center md:px-12"
+        className="mx-auto max-w-7xl scroll-mt-28 py-20"
       >
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-300">
-          Your next build starts here
-        </p>
-        <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-          Find committed campus builders. Form a team. Ship on time.
-        </h2>
-        <Link
-          to="/signup"
-          className="mt-7 inline-block rounded-xl bg-white px-7 py-3.5 font-semibold text-slate-950 hover:bg-indigo-100"
-        >
-          Join ShipPact
-        </Link>
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-300">
+              Why ShipPact
+            </p>
+            <h2 className="mt-3 text-3xl font-bold md:text-5xl">
+              A team match built around commitment.
+            </h2>
+            <p className="mt-5 max-w-xl leading-7 text-slate-400">
+              Generic groups match people by interest. ShipPact helps SRM
+              builders align on the role, availability, work mode and
+              deadline before they commit.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-indigo-400/20 bg-indigo-500/10 p-7 md:p-9">
+            <ul className="space-y-5 text-left">
+              {[
+                'Campus-focused profiles with skills and preferred roles',
+                'Clear weekly availability and project expectations',
+                'Exact skill gaps instead of vague team invitations',
+                'Deadlines visible before a student applies',
+              ].map((reason) => (
+                <li key={reason} className="flex gap-3 text-slate-200">
+                  <span className="mt-1 text-green-400">✓</span>
+                  <span>{reason}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              to="/signup"
+              className="mt-8 inline-block rounded-xl bg-white px-7 py-3.5 font-semibold text-slate-950 hover:bg-indigo-100"
+            >
+              Join ShipPact
+            </Link>
+          </div>
+        </div>
       </section>
     </main>
   )

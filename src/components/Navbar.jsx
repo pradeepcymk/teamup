@@ -66,6 +66,10 @@ function Navbar() {
 
         {/* Desktop navigation */}
         <div className="hidden items-center gap-3 xl:flex">
+          <Link to="/" className={navigationLink}>
+            Home
+          </Link>
+
           <Link to="/#how-it-works" className={navigationLink}>
             How It Works
           </Link>
@@ -163,6 +167,10 @@ function Navbar() {
       {menuOpen && (
         <div className="mx-auto mt-5 max-w-7xl border-t border-slate-800 pt-5 xl:hidden">
           <div className="flex flex-col gap-2">
+            <Link to="/" className={navigationLink}>
+              Home
+            </Link>
+
             <Link to="/#how-it-works" className={navigationLink}>
               How It Works
             </Link>

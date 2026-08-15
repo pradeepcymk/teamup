@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -27,7 +28,7 @@ function Login() {
     }
 
     setLoading(false)
-    navigate('/teams')
+    navigate(location.state?.from || '/teams', { replace: true })
   }
 
   return (
@@ -44,6 +45,12 @@ function Login() {
         <p className="mt-3 text-slate-400">
           Continue finding and building great teams.
         </p>
+
+        {location.state?.message && (
+          <p className="mt-5 rounded-lg border border-indigo-400/30 bg-indigo-400/10 p-3 text-sm text-indigo-200">
+            {location.state.message}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
@@ -101,12 +108,12 @@ function Login() {
 
         <p className="mt-6 text-center text-sm text-slate-400">
           Don&apos;t have an account?{' '}
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="font-semibold text-indigo-400 hover:text-indigo-300"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </section>
     </main>

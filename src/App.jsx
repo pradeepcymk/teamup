@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import BrowseTeams from './pages/BrowseTeams'
 import Login from './pages/Login'
@@ -22,16 +23,23 @@ function App() {
         <Routes>
           
           <Route path="/" element={<Home />} />
-          <Route path="/teams" element={<BrowseTeams />} />
+          <Route
+            path="/teams"
+            element={
+              <ProtectedRoute>
+                <BrowseTeams />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/create-team" element={<CreateTeam />} />
-          <Route path="/teams/:id" element={<TeamDetails />} />
-          <Route path="/applications" element={<Applications />} />
-          <Route path="/my-teams" element={<MyTeams />} />
-          <Route path="/teams/:id/edit" element={<EditTeam />} />
-          <Route path="/my-requests" element={<MyRequests />} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/create-team" element={<ProtectedRoute><CreateTeam /></ProtectedRoute>} />
+          <Route path="/teams/:id" element={<ProtectedRoute><TeamDetails /></ProtectedRoute>} />
+          <Route path="/applications" element={<ProtectedRoute><Applications /></ProtectedRoute>} />
+          <Route path="/my-teams" element={<ProtectedRoute><MyTeams /></ProtectedRoute>} />
+          <Route path="/teams/:id/edit" element={<ProtectedRoute><EditTeam /></ProtectedRoute>} />
+          <Route path="/my-requests" element={<ProtectedRoute><MyRequests /></ProtectedRoute>} />
         </Routes>
       </div>
       <Analytics />
