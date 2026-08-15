@@ -13,6 +13,8 @@ const emptyProfile = {
   availability: '',
   github_url: '',
   linkedin_url: '',
+  contact_type: 'Email',
+  contact_value: '',
   looking_for_team: true,
 }
 
@@ -48,6 +50,18 @@ function Profile() {
         return
       }
 
+      const { data: contactData, error: contactError } = await supabase
+        .from('private_contacts')
+        .select('contact_type, contact_value')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (contactError) {
+        setErrorMessage(contactError.message)
+        setLoading(false)
+        return
+      }
+
       setProfile({
         full_name: data.full_name || '',
         college: data.college || '',
@@ -59,6 +73,8 @@ function Profile() {
         availability: data.availability || '',
         github_url: data.github_url || '',
         linkedin_url: data.linkedin_url || '',
+        contact_type: contactData?.contact_type || 'Email',
+        contact_value: contactData?.contact_value || '',
         looking_for_team: data.looking_for_team ?? true,
       })
       setLoading(false)
@@ -121,6 +137,35 @@ function Profile() {
 
     if (error) {
       setErrorMessage(error.message)
+      setSaving(false)
+      return
+    }
+
+    const contactValue = profile.contact_value.trim()
+    let contactError
+
+    if (contactValue) {
+      const { error: upsertError } = await supabase
+        .from('private_contacts')
+        .upsert({
+          user_id: user.id,
+          contact_type: profile.contact_type,
+          contact_value: contactValue,
+          updated_at: new Date().toISOString(),
+        })
+
+      contactError = upsertError
+    } else {
+      const { error: deleteError } = await supabase
+        .from('private_contacts')
+        .delete()
+        .eq('user_id', user.id)
+
+      contactError = deleteError
+    }
+
+    if (contactError) {
+      setErrorMessage(contactError.message)
       setSaving(false)
       return
     }
@@ -219,6 +264,18 @@ function Profile() {
               <ProfileDetail label="Availability" value={profile.availability || 'Not specified'} />
 
               <div>
+                <p className="text-sm text-slate-500">Private team contact</p>
+                <p className="mt-2 font-semibold text-slate-200">
+                  {profile.contact_value
+                    ? `${profile.contact_type}: ${profile.contact_value}`
+                    : 'Not added'}
+                </p>
+                <p className="mt-2 text-xs leading-5 text-slate-500">
+                  Only teammates accepted into one of your teams can access this.
+                </p>
+              </div>
+
+              <div>
                 <p className="text-sm text-slate-500">Links</p>
                 <div className="mt-2 flex flex-wrap gap-4">
                   {profile.github_url && <ProfileLink href={profile.github_url}>GitHub ↗</ProfileLink>}
@@ -277,6 +334,36 @@ function Profile() {
             <div className="grid gap-6 md:grid-cols-2">
               <Field label="GitHub profile" name="github_url" type="url" value={profile.github_url} onChange={handleChange} placeholder="https://github.com/username" inputStyle={inputStyle} />
               <Field label="LinkedIn profile" name="linkedin_url" type="url" value={profile.linkedin_url} onChange={handleChange} placeholder="https://linkedin.com/in/username" inputStyle={inputStyle} />
+            </div>
+
+            <div className="rounded-xl border border-indigo-400/20 bg-indigo-500/5 p-5">
+              <p className="font-semibold text-white">Private contact after acceptance</p>
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                This remains private until another student is accepted into the same team.
+              </p>
+
+              <div className="mt-5 grid gap-5 md:grid-cols-[1fr_2fr]">
+                <div>
+                  <label className={labelStyle}>Contact type</label>
+                  <select name="contact_type" value={profile.contact_type} onChange={handleChange} className={inputStyle}>
+                    <option value="Email">Email</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Discord">Discord</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <Field
+                  label="Contact email, username or link"
+                  name="contact_value"
+                  value={profile.contact_value}
+                  onChange={handleChange}
+                  maxLength="200"
+                  placeholder="you@example.com or https://wa.me/..."
+                  inputStyle={inputStyle}
+                />
+              </div>
             </div>
 
             <label className="flex items-center gap-3 text-slate-300">

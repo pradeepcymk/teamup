@@ -90,6 +90,7 @@ const memberIds = (memberRows || []).map(
 )
 
 let memberProfiles = []
+let memberContacts = []
 
 if (memberIds.length > 0) {
   const { data: profilesData, error: profilesError } = await supabase
@@ -104,12 +105,28 @@ if (memberIds.length > 0) {
   }
 
   memberProfiles = profilesData || []
+
+  const { data: contactsData, error: contactsError } = await supabase
+    .from('private_contacts')
+    .select('user_id, contact_type, contact_value')
+    .in('user_id', memberIds)
+
+  if (contactsError) {
+    setErrorMessage(contactsError.message)
+    setLoading(false)
+    return
+  }
+
+  memberContacts = contactsData || []
 }
 
 const combinedMembers = (memberRows || []).map((member) => ({
   ...member,
   profile: memberProfiles.find(
     (profile) => profile.id === member.user_id
+  ),
+  contact: memberContacts.find(
+    (contact) => contact.user_id === member.user_id
   ),
 }))
 
@@ -349,6 +366,15 @@ async function handleApplicationSubmit(event) {
               ))}
             </div>
           )}
+
+          {member.contact && (
+            <div className="mt-4 border-t border-slate-800 pt-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-green-400">
+                Accepted teammate contact
+              </p>
+              <ContactValue contact={member.contact} />
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -560,6 +586,40 @@ function Detail({ label, value }) {
         {value}
       </p>
     </div>
+  )
+}
+
+function ContactValue({ contact }) {
+  const { contact_type: type, contact_value: value } = contact
+  let href = ''
+
+  if (type === 'Email') {
+    href = `mailto:${value}`
+  } else if (type === 'WhatsApp') {
+    href = value.startsWith('http')
+      ? value
+      : `https://wa.me/${value.replace(/\D/g, '')}`
+  } else if (type === 'LinkedIn' || value.startsWith('http')) {
+    href = value
+  }
+
+  if (!href) {
+    return (
+      <p className="mt-2 break-all font-semibold text-slate-200">
+        {type}: {value}
+      </p>
+    )
+  }
+
+  return (
+    <a
+      href={href}
+      target={href.startsWith('http') ? '_blank' : undefined}
+      rel={href.startsWith('http') ? 'noreferrer' : undefined}
+      className="mt-2 block break-all font-semibold text-indigo-400 hover:text-indigo-300"
+    >
+      {type}: {value} ↗
+    </a>
   )
 }
 
