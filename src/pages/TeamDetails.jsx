@@ -9,6 +9,7 @@ function TeamDetails() {
   const [team, setTeam] = useState(null)
   const [creator, setCreator] = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
+  const [teamMembers, setTeamMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [showApplicationForm, setShowApplicationForm] = useState(false)
@@ -71,7 +72,49 @@ const [successMessage, setSuccessMessage] = useState('')
       }
 
       setCreator(creatorData)
-      setLoading(false)
+
+const { data: memberRows, error: membersError } = await supabase
+  .from('team_members')
+  .select('*')
+  .eq('post_id', teamData.id)
+  .order('joined_at', { ascending: true })
+
+if (membersError) {
+  setErrorMessage(membersError.message)
+  setLoading(false)
+  return
+}
+
+const memberIds = (memberRows || []).map(
+  (member) => member.user_id
+)
+
+let memberProfiles = []
+
+if (memberIds.length > 0) {
+  const { data: profilesData, error: profilesError } = await supabase
+    .from('profiles')
+    .select('id, full_name, department, study_year, skills')
+    .in('id', memberIds)
+
+  if (profilesError) {
+    setErrorMessage(profilesError.message)
+    setLoading(false)
+    return
+  }
+
+  memberProfiles = profilesData || []
+}
+
+const combinedMembers = (memberRows || []).map((member) => ({
+  ...member,
+  profile: memberProfiles.find(
+    (profile) => profile.id === member.user_id
+  ),
+}))
+
+setTeamMembers(combinedMembers)
+setLoading(false)
     }
 
     loadTeam()
@@ -257,6 +300,60 @@ async function handleApplicationSubmit(event) {
                 value={team.time_commitment || 'Not specified'}
               />
             </div>
+
+            <div className="mt-8 border-t border-slate-800 pt-8">
+  <div className="flex items-center justify-between gap-4">
+    <h2 className="text-xl font-bold">
+      Team members
+    </h2>
+
+    <span className="text-sm text-slate-400">
+      {team.current_members}/{team.maximum_members}
+    </span>
+  </div>
+
+  {teamMembers.length === 0 ? (
+    <p className="mt-4 text-slate-400">
+      No team members found.
+    </p>
+  ) : (
+    <div className="mt-5 grid gap-4 sm:grid-cols-2">
+      {teamMembers.map((member) => (
+        <div
+          key={member.id}
+          className="rounded-xl border border-slate-800 bg-slate-950 p-5"
+        >
+          <h3 className="font-bold text-white">
+            {member.profile?.full_name || 'Student'}
+          </h3>
+
+          <p className="mt-1 text-sm font-semibold text-indigo-400">
+            {member.role}
+          </p>
+
+          {member.profile?.department && (
+            <p className="mt-2 text-sm text-slate-400">
+              {member.profile.department}
+            </p>
+          )}
+
+          {member.profile?.skills?.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {member.profile.skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="rounded-full bg-slate-800 px-2 py-1 text-xs text-slate-300"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
           {isCreator ? (
   <p className="mt-8 rounded-xl bg-indigo-500/10 p-4 text-indigo-300">
     You created this team post.

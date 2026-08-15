@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 function Navbar() {
   const [user, setUser] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     async function getUser() {
@@ -28,6 +35,10 @@ function Navbar() {
     }
   }, [])
 
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
   async function handleLogout() {
     const { error } = await supabase.auth.signOut()
 
@@ -36,68 +47,195 @@ function Navbar() {
       return
     }
 
+    setMenuOpen(false)
     navigate('/')
   }
 
+  const navigationLink =
+    'rounded-lg px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800 hover:text-white'
+
   return (
-    <nav className="absolute left-0 top-0 z-10 flex w-full items-center justify-between px-6 py-6 md:px-12">
-      <Link to="/" className="text-2xl font-bold text-white">
-        Team<span className="text-indigo-400">Up</span>
-      </Link>
-
-      <div className="hidden items-center gap-8 text-sm font-medium text-slate-300 md:flex">
-        <Link to="/" className="hover:text-white">
-          How It Works
+    <nav className="absolute left-0 top-0 z-50 w-full border-b border-slate-800/60 bg-slate-950/90 px-6 py-5 backdrop-blur-md md:px-12">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <Link
+          to="/"
+          className="text-2xl font-bold text-white"
+        >
+          Team<span className="text-indigo-400">Up</span>
         </Link>
 
-        <Link to="/teams" className="hover:text-white">
-          Browse Teams
-        </Link>
+        {/* Desktop navigation */}
+        <div className="hidden items-center gap-3 xl:flex">
+          <Link to="/" className={navigationLink}>
+            How It Works
+          </Link>
 
-        <Link to="/" className="hover:text-white">
-          About
-        </Link>
+          <Link to="/teams" className={navigationLink}>
+            Browse Teams
+          </Link>
+
+          <Link to="/" className={navigationLink}>
+            About
+          </Link>
+
+          {user ? (
+            <>
+              <div className="mx-2 h-6 w-px bg-slate-700" />
+
+              <Link to="/profile" className={navigationLink}>
+                My Profile
+              </Link>
+
+              <Link to="/my-teams" className={navigationLink}>
+                My Teams
+              </Link>
+
+              <Link to="/my-requests" className={navigationLink}>
+                My Requests
+              </Link>
+
+              <Link
+                to="/applications"
+                className={navigationLink}
+              >
+                Applications
+              </Link>
+
+              <span className="max-w-32 truncate px-2 text-sm text-slate-400">
+                {user.user_metadata?.full_name || user.email}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-lg border border-slate-700 px-4 py-2 font-semibold text-white hover:border-indigo-400"
+              >
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="mx-2 h-6 w-px bg-slate-700" />
+
+              <Link to="/login" className={navigationLink}>
+                Log In
+              </Link>
+
+              <Link
+                to="/signup"
+                className="rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen((current) => !current)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+          className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-lg border border-slate-700 text-white hover:border-indigo-400 xl:hidden"
+        >
+          <span
+            className={`h-0.5 w-5 bg-current transition ${
+              menuOpen ? 'translate-y-2 rotate-45' : ''
+            }`}
+          />
+
+          <span
+            className={`h-0.5 w-5 bg-current transition ${
+              menuOpen ? 'opacity-0' : ''
+            }`}
+          />
+
+          <span
+            className={`h-0.5 w-5 bg-current transition ${
+              menuOpen ? '-translate-y-2 -rotate-45' : ''
+            }`}
+          />
+        </button>
       </div>
 
-      <div className="flex items-center gap-3">
-        {user ? (
-          <>
-          <Link
-  to="/profile"
-  className="px-4 py-2 font-semibold text-slate-300 hover:text-white"
->
-  My Profile
-</Link>
-            <span className="hidden text-sm text-slate-400 lg:block">
-              {user.user_metadata.full_name || user.email}
-            </span>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-lg border border-slate-700 px-4 py-2 font-semibold text-white hover:border-indigo-400"
-            >
-              Log Out
-            </button>
-          </>
-        ) : (
-          <>
-            <Link
-              to="/login"
-              className="px-4 py-2 font-semibold text-slate-300 hover:text-white"
-            >
-              Log In
+      {/* Mobile and tablet menu */}
+      {menuOpen && (
+        <div className="mx-auto mt-5 max-w-7xl border-t border-slate-800 pt-5 xl:hidden">
+          <div className="flex flex-col gap-2">
+            <Link to="/" className={navigationLink}>
+              How It Works
             </Link>
 
-            <Link
-              to="/signup"
-              className="rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
-            >
-              Sign Up
+            <Link to="/teams" className={navigationLink}>
+              Browse Teams
             </Link>
-          </>
-        )}
-      </div>
+
+            <Link to="/" className={navigationLink}>
+              About
+            </Link>
+
+            {user ? (
+              <>
+                <div className="my-2 border-t border-slate-800" />
+
+                <p className="px-3 py-1 text-sm text-slate-500">
+                  Signed in as
+                </p>
+
+                <p className="truncate px-3 pb-2 font-semibold text-white">
+                  {user.user_metadata?.full_name || user.email}
+                </p>
+
+                <Link to="/profile" className={navigationLink}>
+                  My Profile
+                </Link>
+
+                <Link to="/my-teams" className={navigationLink}>
+                  My Teams
+                </Link>
+
+                <Link
+                  to="/my-requests"
+                  className={navigationLink}
+                >
+                  My Requests
+                </Link>
+
+                <Link
+                  to="/applications"
+                  className={navigationLink}
+                >
+                  Applications
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mt-3 rounded-lg border border-red-500/60 px-4 py-3 text-left font-semibold text-red-400 hover:bg-red-500/10"
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="my-2 border-t border-slate-800" />
+
+                <Link to="/login" className={navigationLink}>
+                  Log In
+                </Link>
+
+                <Link
+                  to="/signup"
+                  className="rounded-lg bg-indigo-500 px-4 py-3 text-center font-semibold text-white hover:bg-indigo-400"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }

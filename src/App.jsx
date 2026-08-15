@@ -7,6 +7,10 @@ import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import CreateTeam from './pages/CreateTeam'
 import TeamDetails from './pages/TeamDetails'
+import Applications from './pages/Applications'
+import MyTeams from './pages/MyTeams'
+import EditTeam from './pages/EditTeam'
+import MyRequests from './pages/MyRequests'
 
 function App() {
   return (
@@ -23,6 +27,10 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-team" element={<CreateTeam />} />
           <Route path="/teams/:id" element={<TeamDetails />} />
+          <Route path="/applications" element={<Applications />} />
+          <Route path="/my-teams" element={<MyTeams />} />
+          <Route path="/teams/:id/edit" element={<EditTeam />} />
+          <Route path="/my-requests" element={<MyRequests />} />
         </Routes>
       </div>
     </BrowserRouter>

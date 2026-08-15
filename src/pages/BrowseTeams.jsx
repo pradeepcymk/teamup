@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
@@ -6,6 +6,11 @@ function BrowseTeams() {
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+
+  const [search, setSearch] = useState('')
+  const [projectType, setProjectType] = useState('')
+  const [workMode, setWorkMode] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
 
   useEffect(() => {
     async function loadTeams() {
@@ -27,6 +32,75 @@ function BrowseTeams() {
 
     loadTeams()
   }, [])
+
+  const filteredTeams = useMemo(() => {
+    const searchText = search.trim().toLowerCase()
+
+    const results = teams.filter((team) => {
+      const searchableText = [
+        team.title,
+        team.event_name,
+        team.description,
+        ...(team.required_skills || []),
+        ...(team.required_roles || []),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+
+      const matchesSearch =
+        !searchText || searchableText.includes(searchText)
+
+      const matchesProjectType =
+        !projectType || team.project_type === projectType
+
+      const matchesWorkMode =
+        !workMode || team.work_mode === workMode
+
+      return (
+        matchesSearch &&
+        matchesProjectType &&
+        matchesWorkMode
+      )
+    })
+
+    return [...results].sort((firstTeam, secondTeam) => {
+      if (sortBy === 'deadline') {
+        if (!firstTeam.deadline) return 1
+        if (!secondTeam.deadline) return -1
+
+        return (
+          new Date(firstTeam.deadline) -
+          new Date(secondTeam.deadline)
+        )
+      }
+
+      if (sortBy === 'available-spots') {
+        const firstAvailable =
+          firstTeam.maximum_members - firstTeam.current_members
+
+        const secondAvailable =
+          secondTeam.maximum_members - secondTeam.current_members
+
+        return secondAvailable - firstAvailable
+      }
+
+      return (
+        new Date(secondTeam.created_at) -
+        new Date(firstTeam.created_at)
+      )
+    })
+  }, [teams, search, projectType, workMode, sortBy])
+
+  function clearFilters() {
+    setSearch('')
+    setProjectType('')
+    setWorkMode('')
+    setSortBy('newest')
+  }
+
+  const inputStyle =
+    'rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-indigo-400'
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 pb-16 pt-32 text-white md:px-12">
@@ -54,6 +128,75 @@ function BrowseTeams() {
           </Link>
         </div>
 
+        <div className="mt-10 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <div className="grid gap-4 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search title, skills, roles or events..."
+              className={inputStyle}
+            />
+
+            <select
+              value={projectType}
+              onChange={(event) =>
+                setProjectType(event.target.value)
+              }
+              className={inputStyle}
+            >
+              <option value="">All project types</option>
+              <option value="Hackathon">Hackathon</option>
+              <option value="College Project">
+                College Project
+              </option>
+              <option value="Personal Project">
+                Personal Project
+              </option>
+            </select>
+
+            <select
+              value={workMode}
+              onChange={(event) =>
+                setWorkMode(event.target.value)
+              }
+              className={inputStyle}
+            >
+              <option value="">All work modes</option>
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+
+            <select
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+              className={inputStyle}
+            >
+              <option value="newest">Newest first</option>
+              <option value="deadline">Deadline soon</option>
+              <option value="available-spots">
+                Most available spots
+              </option>
+            </select>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <p className="text-sm text-slate-400">
+              {filteredTeams.length}{' '}
+              {filteredTeams.length === 1 ? 'team' : 'teams'} found
+            </p>
+
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-sm font-semibold text-indigo-400 hover:text-indigo-300"
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+
         {loading && (
           <p className="mt-12 text-slate-400">
             Loading teams...
@@ -66,27 +209,52 @@ function BrowseTeams() {
           </p>
         )}
 
-        {!loading && !errorMessage && teams.length === 0 && (
-          <div className="mt-12 rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
-            <h2 className="text-2xl font-bold">
-              No open teams yet
-            </h2>
+        {!loading &&
+          !errorMessage &&
+          teams.length === 0 && (
+            <div className="mt-12 rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
+              <h2 className="text-2xl font-bold">
+                No open teams yet
+              </h2>
 
-            <p className="mt-3 text-slate-400">
-              Be the first student to publish a team post.
-            </p>
+              <p className="mt-3 text-slate-400">
+                Be the first student to publish a team post.
+              </p>
 
-            <Link
-              to="/create-team"
-              className="mt-6 inline-block rounded-xl bg-indigo-500 px-5 py-3 font-semibold hover:bg-indigo-400"
-            >
-              Create a Team
-            </Link>
-          </div>
-        )}
+              <Link
+                to="/create-team"
+                className="mt-6 inline-block rounded-xl bg-indigo-500 px-5 py-3 font-semibold hover:bg-indigo-400"
+              >
+                Create a Team
+              </Link>
+            </div>
+          )}
+
+        {!loading &&
+          !errorMessage &&
+          teams.length > 0 &&
+          filteredTeams.length === 0 && (
+            <div className="mt-12 rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
+              <h2 className="text-2xl font-bold">
+                No matching teams
+              </h2>
+
+              <p className="mt-3 text-slate-400">
+                Try changing your search or filters.
+              </p>
+
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-6 rounded-xl bg-indigo-500 px-5 py-3 font-semibold hover:bg-indigo-400"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {teams.map((team) => (
+          {filteredTeams.map((team) => (
             <article
               key={team.id}
               className="flex flex-col rounded-2xl border border-slate-800 bg-slate-900 p-6"
