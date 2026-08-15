@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import SrmVerifiedBadge from '../components/SrmVerifiedBadge'
 
 function TeamDetails() {
   const { id } = useParams()
@@ -60,7 +61,7 @@ const [successMessage, setSuccessMessage] = useState('')
       const { data: creatorData, error: creatorError } = await supabase
         .from('profiles')
         .select(
-          'full_name, college, department, study_year, bio, skills, github_url, linkedin_url'
+          'full_name, college, department, study_year, bio, skills, github_url, linkedin_url, is_srm_verified'
         )
         .eq('id', teamData.creator_id)
         .single()
@@ -95,7 +96,7 @@ let memberContacts = []
 if (memberIds.length > 0) {
   const { data: profilesData, error: profilesError } = await supabase
     .from('profiles')
-    .select('id, full_name, department, study_year, skills')
+    .select('id, full_name, department, study_year, skills, is_srm_verified')
     .in('id', memberIds)
 
   if (profilesError) {
@@ -346,6 +347,12 @@ async function handleApplicationSubmit(event) {
             {member.profile?.full_name || 'Student'}
           </h3>
 
+          {member.profile?.is_srm_verified && (
+            <div className="mt-2">
+              <SrmVerifiedBadge compact />
+            </div>
+          )}
+
           <p className="mt-1 text-sm font-semibold text-indigo-400">
             {member.role}
           </p>
@@ -523,6 +530,12 @@ async function handleApplicationSubmit(event) {
             <h2 className="mt-2 text-2xl font-bold">
               {creator?.full_name || 'Student'}
             </h2>
+
+            {creator?.is_srm_verified && (
+              <div className="mt-3">
+                <SrmVerifiedBadge compact />
+              </div>
+            )}
 
             <p className="mt-2 text-slate-400">
               {[creator?.department, creator?.college]

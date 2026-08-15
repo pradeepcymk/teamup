@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import SrmVerifiedBadge from '../components/SrmVerifiedBadge'
 
 function Applications() {
   const navigate = useNavigate()
@@ -73,7 +74,7 @@ function Applications() {
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select(
-        'id, full_name, college, department, study_year, bio, skills, github_url, linkedin_url'
+        'id, full_name, college, department, study_year, bio, skills, github_url, linkedin_url, is_srm_verified'
       )
       .in('id', applicantIds)
 
@@ -214,6 +215,12 @@ function Applications() {
                 <h2 className="text-xl font-bold">
                   {application.applicant?.full_name || 'Student'}
                 </h2>
+
+                {application.applicant?.is_srm_verified && (
+                  <div className="mt-3">
+                    <SrmVerifiedBadge compact />
+                  </div>
+                )}
 
                 <p className="mt-2 text-slate-400">
                   {[

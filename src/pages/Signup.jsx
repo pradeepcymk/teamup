@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { isApprovedSrmEmail } from '../lib/srmVerification'
 
 function Signup() {
   const [fullName, setFullName] = useState('')
@@ -14,6 +15,12 @@ function Signup() {
     setLoading(true)
     setMessage('')
     setErrorMessage('')
+
+    if (!isApprovedSrmEmail(email)) {
+      setErrorMessage('Please sign up using your official @srmist.edu.in email address.')
+      setLoading(false)
+      return
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -92,6 +99,9 @@ function Signup() {
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
             />
+            <p className="mt-2 text-xs text-slate-500">
+              New accounts require a confirmed @srmist.edu.in address.
+            </p>
           </div>
 
           <div>

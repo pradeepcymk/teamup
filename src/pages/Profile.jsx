@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import SrmVerifiedBadge from '../components/SrmVerifiedBadge'
 
 const emptyProfile = {
   full_name: '',
@@ -26,6 +27,7 @@ function Profile() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [isSrmVerified, setIsSrmVerified] = useState(false)
 
   useEffect(() => {
     async function loadProfile() {
@@ -77,6 +79,7 @@ function Profile() {
         contact_value: contactData?.contact_value || '',
         looking_for_team: data.looking_for_team ?? true,
       })
+      setIsSrmVerified(data.is_srm_verified === true)
       setLoading(false)
     }
 
@@ -237,6 +240,11 @@ function Profile() {
                   <h2 className="text-3xl font-bold">
                     {profile.full_name || 'Student'}
                   </h2>
+                  {isSrmVerified && (
+                    <div className="mt-3">
+                      <SrmVerifiedBadge />
+                    </div>
+                  )}
                   <p className="mt-2 text-slate-400">
                     {[profile.department, profile.study_year].filter(Boolean).join(' · ') || 'Academic details not added'}
                   </p>
