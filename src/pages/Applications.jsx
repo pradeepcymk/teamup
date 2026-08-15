@@ -239,13 +239,17 @@ function Applications() {
                     {application.requested_role}
                   </p>
 
-                  <p className="mt-5 text-sm text-slate-500">
-                    Application message
-                  </p>
+                  {application.message && (
+                    <>
+                      <p className="mt-5 text-sm text-slate-500">
+                        Application message
+                      </p>
 
-                  <p className="mt-2 whitespace-pre-line leading-7 text-slate-300">
-                    {application.message}
-                  </p>
+                      <p className="mt-2 whitespace-pre-line leading-7 text-slate-300">
+                        {application.message}
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 {application.applicant?.skills?.length > 0 && (

@@ -178,7 +178,7 @@ async function handleApplicationSubmit(event) {
       post_id: team.id,
       applicant_id: currentUser.id,
       requested_role: requestedRole,
-      message: applicationMessage,
+      message: applicationMessage.trim(),
     })
     .select()
     .single()
@@ -418,7 +418,7 @@ async function handleApplicationSubmit(event) {
         htmlFor="applicationMessage"
         className="mb-2 block text-sm font-medium text-slate-300"
       >
-        Why would you be a good teammate?
+        Message <span className="text-slate-500">(optional)</span>
       </label>
 
       <textarea
@@ -428,10 +428,8 @@ async function handleApplicationSubmit(event) {
           setApplicationMessage(event.target.value)
         }
         placeholder="Introduce yourself, explain your experience and describe how you can contribute."
-        minLength="20"
         maxLength="500"
         rows="5"
-        required
         className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
       />
     </div>

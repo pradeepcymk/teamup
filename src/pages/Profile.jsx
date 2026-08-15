@@ -2,23 +2,24 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
+const emptyProfile = {
+  full_name: '',
+  college: '',
+  department: '',
+  study_year: '',
+  bio: '',
+  skills: '',
+  preferred_roles: '',
+  availability: '',
+  github_url: '',
+  linkedin_url: '',
+  looking_for_team: true,
+}
+
 function Profile() {
   const navigate = useNavigate()
-
-  const [profile, setProfile] = useState({
-    full_name: '',
-    college: '',
-    department: '',
-    study_year: '',
-    bio: '',
-    skills: '',
-    preferred_roles: '',
-    availability: '',
-    github_url: '',
-    linkedin_url: '',
-    looking_for_team: true,
-  })
-
+  const [profile, setProfile] = useState(emptyProfile)
+  const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -58,9 +59,8 @@ function Profile() {
         availability: data.availability || '',
         github_url: data.github_url || '',
         linkedin_url: data.linkedin_url || '',
-        looking_for_team: data.looking_for_team,
+        looking_for_team: data.looking_for_team ?? true,
       })
-
       setLoading(false)
     }
 
@@ -127,6 +127,7 @@ function Profile() {
 
     setMessage('Profile saved successfully!')
     setSaving(false)
+    setIsEditing(false)
   }
 
   if (loading) {
@@ -139,195 +140,207 @@ function Profile() {
 
   const inputStyle =
     'w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400'
-
-  const labelStyle =
-    'mb-2 block text-sm font-medium text-slate-300'
+  const labelStyle = 'mb-2 block text-sm font-medium text-slate-300'
+  const skills = profile.skills.split(',').map((item) => item.trim()).filter(Boolean)
+  const roles = profile.preferred_roles.split(',').map((item) => item.trim()).filter(Boolean)
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 pb-16 pt-32 text-white">
       <section className="mx-auto max-w-3xl">
-        <p className="font-semibold text-indigo-400">Your builder profile</p>
+        <div className="flex items-start justify-between gap-6">
+          <div>
+            <p className="font-semibold text-indigo-400">Your builder profile</p>
+            <h1 className="mt-2 text-4xl font-bold">My profile</h1>
+            <p className="mt-4 text-slate-400">
+              This is how team creators see your skills and availability.
+            </p>
+          </div>
 
-        <h1 className="mt-2 text-4xl font-bold">
-          Show teams how you contribute
-        </h1>
+          {!isEditing && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditing(true)
+                setMessage('')
+              }}
+              aria-label="Edit profile"
+              title="Edit profile"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-700 text-slate-300 hover:border-indigo-400 hover:text-indigo-300"
+            >
+              <span aria-hidden="true">✎</span>
+            </button>
+          )}
+        </div>
 
-        <p className="mt-4 text-slate-400">
-          Share your skills, availability and proof of work so teammates know what they can count on.
-        </p>
+        {errorMessage && (
+          <p className="mt-6 rounded-lg bg-red-500/10 p-3 text-red-400">
+            {errorMessage}
+          </p>
+        )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-10 space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-8"
-        >
-          <div className="grid gap-6 md:grid-cols-2">
-            <div>
-              <label className={labelStyle}>Full name</label>
-              <input
-                name="full_name"
-                value={profile.full_name}
-                onChange={handleChange}
-                required
-                className={inputStyle}
-              />
+        {message && !isEditing && (
+          <p className="mt-6 rounded-lg bg-green-500/10 p-3 text-green-400">
+            {message}
+          </p>
+        )}
+
+        {!isEditing ? (
+          <article className="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+            <div className="border-b border-slate-800 p-8">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-3xl font-bold">
+                    {profile.full_name || 'Student'}
+                  </h2>
+                  <p className="mt-2 text-slate-400">
+                    {[profile.department, profile.study_year].filter(Boolean).join(' · ') || 'Academic details not added'}
+                  </p>
+                  <p className="mt-1 text-slate-500">
+                    {profile.college || 'College not added'}
+                  </p>
+                </div>
+
+                <span className={`rounded-full px-3 py-1 text-sm font-semibold ${profile.looking_for_team ? 'bg-green-500/10 text-green-400' : 'bg-slate-800 text-slate-400'}`}>
+                  {profile.looking_for_team ? 'Looking for a team' : 'Not looking right now'}
+                </span>
+              </div>
+
+              {profile.bio && (
+                <p className="mt-6 whitespace-pre-line leading-7 text-slate-300">
+                  {profile.bio}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-8 p-8 md:grid-cols-2">
+              <ProfileList title="Skills" items={skills} empty="No skills added" />
+              <ProfileList title="Preferred roles" items={roles} empty="No roles added" accent />
+
+              <ProfileDetail label="Availability" value={profile.availability || 'Not specified'} />
+
+              <div>
+                <p className="text-sm text-slate-500">Links</p>
+                <div className="mt-2 flex flex-wrap gap-4">
+                  {profile.github_url && <ProfileLink href={profile.github_url}>GitHub ↗</ProfileLink>}
+                  {profile.linkedin_url && <ProfileLink href={profile.linkedin_url}>LinkedIn ↗</ProfileLink>}
+                  {!profile.github_url && !profile.linkedin_url && <p className="font-semibold text-slate-300">No links added</p>}
+                </div>
+              </div>
+            </div>
+          </article>
+        ) : (
+          <form onSubmit={handleSubmit} className="mt-10 space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-8">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-2xl font-bold">Edit profile</h2>
+              <button type="button" onClick={() => setIsEditing(false)} className="text-sm font-semibold text-slate-400 hover:text-white">
+                Cancel
+              </button>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <Field label="Full name" name="full_name" value={profile.full_name} onChange={handleChange} required inputStyle={inputStyle} />
+              <Field label="College" name="college" value={profile.college} onChange={handleChange} required placeholder="SRM Institute of Science and Technology" inputStyle={inputStyle} />
+              <Field label="Department" name="department" value={profile.department} onChange={handleChange} required placeholder="Computer Science" inputStyle={inputStyle} />
+
+              <div>
+                <label className={labelStyle}>Year of study</label>
+                <select name="study_year" value={profile.study_year} onChange={handleChange} required className={inputStyle}>
+                  <option value="">Select year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                  <option value="Postgraduate">Postgraduate</option>
+                </select>
+              </div>
             </div>
 
             <div>
-              <label className={labelStyle}>College</label>
-              <input
-                name="college"
-                value={profile.college}
-                onChange={handleChange}
-                placeholder="SRM Institute of Science and Technology"
-                required
-                className={inputStyle}
-              />
+              <label className={labelStyle}>Short bio</label>
+              <textarea name="bio" value={profile.bio} onChange={handleChange} placeholder="Tell other students what you enjoy building." rows="4" className={inputStyle} />
             </div>
 
-            <div>
-              <label className={labelStyle}>Department</label>
-              <input
-                name="department"
-                value={profile.department}
-                onChange={handleChange}
-                placeholder="Computer Science"
-                required
-                className={inputStyle}
-              />
-            </div>
+            <Field label="Skills — separate them with commas" name="skills" value={profile.skills} onChange={handleChange} placeholder="React, Python, Figma" inputStyle={inputStyle} />
+            <Field label="Preferred roles — separate them with commas" name="preferred_roles" value={profile.preferred_roles} onChange={handleChange} placeholder="Frontend Developer, UI/UX Designer" inputStyle={inputStyle} />
 
             <div>
-              <label className={labelStyle}>Year of study</label>
-              <select
-                name="study_year"
-                value={profile.study_year}
-                onChange={handleChange}
-                required
-                className={inputStyle}
-              >
-                <option value="">Select year</option>
-                <option value="1st Year">1st Year</option>
-                <option value="2nd Year">2nd Year</option>
-                <option value="3rd Year">3rd Year</option>
-                <option value="4th Year">4th Year</option>
-                <option value="Postgraduate">Postgraduate</option>
+              <label className={labelStyle}>Availability</label>
+              <select name="availability" value={profile.availability} onChange={handleChange} className={inputStyle}>
+                <option value="">Select availability</option>
+                <option value="Weekdays">Weekdays</option>
+                <option value="Weekends">Weekends</option>
+                <option value="Evenings">Evenings</option>
+                <option value="Flexible">Flexible</option>
               </select>
             </div>
-          </div>
 
-          <div>
-            <label className={labelStyle}>Short bio</label>
-            <textarea
-              name="bio"
-              value={profile.bio}
-              onChange={handleChange}
-              placeholder="Tell other students what you enjoy building."
-              rows="4"
-              className={inputStyle}
-            />
-          </div>
-
-          <div>
-            <label className={labelStyle}>
-              Skills — separate them with commas
-            </label>
-            <input
-              name="skills"
-              value={profile.skills}
-              onChange={handleChange}
-              placeholder="React, Python, Figma"
-              className={inputStyle}
-            />
-          </div>
-
-          <div>
-            <label className={labelStyle}>
-              Preferred roles — separate them with commas
-            </label>
-            <input
-              name="preferred_roles"
-              value={profile.preferred_roles}
-              onChange={handleChange}
-              placeholder="Frontend Developer, UI/UX Designer"
-              className={inputStyle}
-            />
-          </div>
-
-          <div>
-            <label className={labelStyle}>Availability</label>
-            <select
-              name="availability"
-              value={profile.availability}
-              onChange={handleChange}
-              className={inputStyle}
-            >
-              <option value="">Select availability</option>
-              <option value="Weekdays">Weekdays</option>
-              <option value="Weekends">Weekends</option>
-              <option value="Evenings">Evenings</option>
-              <option value="Flexible">Flexible</option>
-            </select>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <div>
-              <label className={labelStyle}>GitHub profile</label>
-              <input
-                name="github_url"
-                type="url"
-                value={profile.github_url}
-                onChange={handleChange}
-                placeholder="https://github.com/username"
-                className={inputStyle}
-              />
+            <div className="grid gap-6 md:grid-cols-2">
+              <Field label="GitHub profile" name="github_url" type="url" value={profile.github_url} onChange={handleChange} placeholder="https://github.com/username" inputStyle={inputStyle} />
+              <Field label="LinkedIn profile" name="linkedin_url" type="url" value={profile.linkedin_url} onChange={handleChange} placeholder="https://linkedin.com/in/username" inputStyle={inputStyle} />
             </div>
 
-            <div>
-              <label className={labelStyle}>LinkedIn profile</label>
-              <input
-                name="linkedin_url"
-                type="url"
-                value={profile.linkedin_url}
-                onChange={handleChange}
-                placeholder="https://linkedin.com/in/username"
-                className={inputStyle}
-              />
+            <label className="flex items-center gap-3 text-slate-300">
+              <input name="looking_for_team" type="checkbox" checked={profile.looking_for_team} onChange={handleChange} className="h-5 w-5 accent-indigo-500" />
+              I am currently looking for a team
+            </label>
+
+            <div className="flex flex-wrap gap-3">
+              <button type="submit" disabled={saving} className="rounded-xl bg-indigo-500 px-6 py-3 font-semibold hover:bg-indigo-400 disabled:opacity-60">
+                {saving ? 'Saving...' : 'Save Profile'}
+              </button>
+              <button type="button" onClick={() => setIsEditing(false)} className="rounded-xl border border-slate-700 px-6 py-3 font-semibold text-slate-300 hover:border-slate-500">
+                Cancel
+              </button>
             </div>
-          </div>
-
-          <label className="flex items-center gap-3 text-slate-300">
-            <input
-              name="looking_for_team"
-              type="checkbox"
-              checked={profile.looking_for_team}
-              onChange={handleChange}
-              className="h-5 w-5 accent-indigo-500"
-            />
-            I am currently looking for a team
-          </label>
-
-          {errorMessage && (
-            <p className="rounded-lg bg-red-500/10 p-3 text-red-400">
-              {errorMessage}
-            </p>
-          )}
-
-          {message && (
-            <p className="rounded-lg bg-green-500/10 p-3 text-green-400">
-              {message}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-xl bg-indigo-500 px-6 py-3 font-semibold hover:bg-indigo-400 disabled:opacity-60"
-          >
-            {saving ? 'Saving...' : 'Save Profile'}
-          </button>
-        </form>
+          </form>
+        )}
       </section>
     </main>
+  )
+}
+
+function Field({ label, inputStyle, ...inputProps }) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-slate-300">{label}</label>
+      <input {...inputProps} className={inputStyle} />
+    </div>
+  )
+}
+
+function ProfileList({ title, items, empty, accent = false }) {
+  return (
+    <div>
+      <p className="text-sm text-slate-500">{title}</p>
+      {items.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {items.map((item) => (
+            <span key={item} className={`rounded-full px-3 py-1 text-sm ${accent ? 'bg-indigo-500/10 text-indigo-300' : 'bg-slate-800 text-slate-300'}`}>
+              {item}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2 font-semibold text-slate-300">{empty}</p>
+      )}
+    </div>
+  )
+}
+
+function ProfileDetail({ label, value }) {
+  return (
+    <div>
+      <p className="text-sm text-slate-500">{label}</p>
+      <p className="mt-2 font-semibold text-slate-200">{value}</p>
+    </div>
+  )
+}
+
+function ProfileLink({ href, children }) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className="font-semibold text-indigo-400 hover:text-indigo-300">
+      {children}
+    </a>
   )
 }
 

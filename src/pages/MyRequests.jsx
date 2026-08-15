@@ -187,13 +187,17 @@ function MyRequests() {
                   {request.requested_role}
                 </p>
 
-                <p className="mt-5 text-sm text-slate-500">
-                  Your message
-                </p>
+                {request.message && (
+                  <>
+                    <p className="mt-5 text-sm text-slate-500">
+                      Your message
+                    </p>
 
-                <p className="mt-2 leading-7 text-slate-300">
-                  {request.message}
-                </p>
+                    <p className="mt-2 leading-7 text-slate-300">
+                      {request.message}
+                    </p>
+                  </>
+                )}
               </div>
 
               {request.status === 'accepted' && (
