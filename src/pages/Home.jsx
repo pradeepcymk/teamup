@@ -34,9 +34,14 @@ function Home() {
             Built for SRM campus builders
           </div>
 
-          <h1 className="max-w-4xl text-5xl font-bold leading-tight tracking-tight md:text-7xl lg:text-8xl">
-            Find teammates who{' '}
-            <span className="text-indigo-400">actually show up.</span>
+          <h1 className="max-w-6xl text-5xl font-bold leading-tight tracking-tight md:text-7xl">
+            <span className="md:block">Find teammates</span>{' '}
+            <span className="md:block">
+              who{' '}
+              <span className="whitespace-nowrap text-indigo-400">
+                actually show up.
+              </span>
+            </span>
           </h1>
 
           <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
