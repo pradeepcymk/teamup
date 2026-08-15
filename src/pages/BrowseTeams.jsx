@@ -108,15 +108,15 @@ function BrowseTeams() {
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="font-semibold text-indigo-400">
-              Find your people
+              Find committed builders
             </p>
 
             <h1 className="mt-2 text-4xl font-bold">
-              Browse open teams
+              Find your next teammate
             </h1>
 
             <p className="mt-4 max-w-2xl text-slate-400">
-              Discover hackathons and student projects that need your skills.
+              Explore SRM hackathons and semester projects that need your skills and availability.
             </p>
           </div>
 
@@ -124,7 +124,7 @@ function BrowseTeams() {
             to="/create-team"
             className="rounded-xl bg-indigo-500 px-5 py-3 text-center font-semibold hover:bg-indigo-400"
           >
-            Create a Team
+            Form a Team
           </Link>
         </div>
 
@@ -225,7 +225,7 @@ function BrowseTeams() {
                 to="/create-team"
                 className="mt-6 inline-block rounded-xl bg-indigo-500 px-5 py-3 font-semibold hover:bg-indigo-400"
               >
-                Create a Team
+                Form a Team
               </Link>
             </div>
           )}

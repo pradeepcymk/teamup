@@ -146,14 +146,14 @@ function Profile() {
   return (
     <main className="min-h-screen bg-slate-950 px-6 pb-16 pt-32 text-white">
       <section className="mx-auto max-w-3xl">
-        <p className="font-semibold text-indigo-400">Your identity</p>
+        <p className="font-semibold text-indigo-400">Your builder profile</p>
 
         <h1 className="mt-2 text-4xl font-bold">
-          Build your student profile
+          Show teams how you contribute
         </h1>
 
         <p className="mt-4 text-slate-400">
-          Help team leaders understand your skills and interests.
+          Share your skills, availability and proof of work so teammates know what they can count on.
         </p>
 
         <form

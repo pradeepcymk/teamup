@@ -1,4 +1,13 @@
-# React + Vite
+# ShipPact
+
+ShipPact is a campus-first platform that helps SRM students find committed
+teammates for hackathons and semester projects. Students can publish team
+needs, match by role and skills, state their availability and track join
+requests from application to acceptance.
+
+**Positioning:** Find committed campus builders. Form a team. Ship on time.
+
+## Development
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 

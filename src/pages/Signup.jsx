@@ -44,7 +44,7 @@ function Signup() {
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 pb-12 pt-28">
       <section className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8">
         <p className="font-semibold text-indigo-400">
-          Join the community
+          Join ShipPact
         </p>
 
         <h1 className="mt-2 text-3xl font-bold text-white">
@@ -52,7 +52,7 @@ function Signup() {
         </h1>
 
         <p className="mt-3 text-slate-400">
-          Start finding teammates for your next project.
+          Find committed SRM teammates for your next build.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -80,7 +80,7 @@ function Signup() {
               htmlFor="email"
               className="mb-2 block text-sm font-medium text-slate-300"
             >
-              Email address
+              College email address
             </label>
 
             <input
@@ -88,7 +88,7 @@ function Signup() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="student@example.com"
+              placeholder="student@srmist.edu.in"
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
             />

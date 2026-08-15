@@ -102,15 +102,15 @@ function CreateTeam() {
     <main className="min-h-screen bg-slate-950 px-6 pb-16 pt-32 text-white">
       <section className="mx-auto max-w-3xl">
         <p className="font-semibold text-indigo-400">
-          Start building
+          Make the pact
         </p>
 
         <h1 className="mt-2 text-4xl font-bold">
-          Create a team post
+          Form a committed team
         </h1>
 
         <p className="mt-4 text-slate-400">
-          Explain what you are building and which teammates you need.
+          Set clear roles, availability and deadlines before inviting teammates.
         </p>
 
         <form
@@ -290,7 +290,7 @@ function CreateTeam() {
             disabled={loading}
             className="rounded-xl bg-indigo-500 px-6 py-3 font-semibold hover:bg-indigo-400 disabled:opacity-60"
           >
-            {loading ? 'Publishing...' : 'Publish Team Post'}
+            {loading ? 'Publishing...' : 'Publish Team Pact'}
           </button>
         </form>
       </section>

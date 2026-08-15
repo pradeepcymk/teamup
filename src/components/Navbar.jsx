@@ -61,21 +61,21 @@ function Navbar() {
           to="/"
           className="text-2xl font-bold text-white"
         >
-          Team<span className="text-indigo-400">Up</span>
+          Ship<span className="text-indigo-400">Pact</span>
         </Link>
 
         {/* Desktop navigation */}
         <div className="hidden items-center gap-3 xl:flex">
-          <Link to="/" className={navigationLink}>
+          <Link to="/#how-it-works" className={navigationLink}>
             How It Works
           </Link>
 
           <Link to="/teams" className={navigationLink}>
-            Browse Teams
+            Find Teammates
           </Link>
 
-          <Link to="/" className={navigationLink}>
-            About
+          <Link to="/#why-shippact" className={navigationLink}>
+            Why ShipPact
           </Link>
 
           {user ? (
@@ -163,16 +163,16 @@ function Navbar() {
       {menuOpen && (
         <div className="mx-auto mt-5 max-w-7xl border-t border-slate-800 pt-5 xl:hidden">
           <div className="flex flex-col gap-2">
-            <Link to="/" className={navigationLink}>
+            <Link to="/#how-it-works" className={navigationLink}>
               How It Works
             </Link>
 
             <Link to="/teams" className={navigationLink}>
-              Browse Teams
+              Find Teammates
             </Link>
 
-            <Link to="/" className={navigationLink}>
-              About
+            <Link to="/#why-shippact" className={navigationLink}>
+              Why ShipPact
             </Link>
 
             {user ? (
