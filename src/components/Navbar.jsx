@@ -94,6 +94,10 @@ function Navbar() {
                 My Requests
               </Link>
 
+              <Link to="/messages" className={navigationLink}>
+                Messages
+              </Link>
+
               <Link
                 to="/applications"
                 className={navigationLink}
@@ -200,6 +204,10 @@ function Navbar() {
                   className={navigationLink}
                 >
                   My Requests
+                </Link>
+
+                <Link to="/messages" className={navigationLink}>
+                  Messages
                 </Link>
 
                 <Link

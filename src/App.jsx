@@ -13,6 +13,7 @@ import Applications from './pages/Applications'
 import MyTeams from './pages/MyTeams'
 import EditTeam from './pages/EditTeam'
 import MyRequests from './pages/MyRequests'
+import Messages from './pages/Messages'
 
 function App() {
   return (
@@ -40,6 +41,8 @@ function App() {
           <Route path="/my-teams" element={<ProtectedRoute><MyTeams /></ProtectedRoute>} />
           <Route path="/teams/:id/edit" element={<ProtectedRoute><EditTeam /></ProtectedRoute>} />
           <Route path="/my-requests" element={<ProtectedRoute><MyRequests /></ProtectedRoute>} />
+          <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/messages/:teamId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         </Routes>
       </div>
       <Analytics />

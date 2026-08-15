@@ -167,6 +167,8 @@ setLoading(false)
   }
 
   const isCreator = currentUser?.id === team.creator_id
+  const canMessageTeam =
+    isCreator || existingRequest?.status === 'accepted'
 
  function handleJoinClick() {
   if (!currentUser) {
@@ -380,6 +382,14 @@ async function handleApplicationSubmit(event) {
     </div>
   )}
 </div>
+          {canMessageTeam && (
+            <Link
+              to={`/messages/${team.id}`}
+              className="mt-8 block w-full rounded-xl bg-indigo-500 px-6 py-3 text-center font-semibold hover:bg-indigo-400"
+            >
+              Open Team Chat
+            </Link>
+          )}
           {isCreator ? (
   <p className="mt-8 rounded-xl bg-indigo-500/10 p-4 text-indigo-300">
     You created this team post.
