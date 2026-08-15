@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
 const benefits = [
   {
@@ -24,6 +25,27 @@ const benefits = [
 
 function Home() {
   const location = useLocation()
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    async function loadUser() {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser()
+
+      setUser(currentUser)
+    }
+
+    loadUser()
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     if (!location.hash) {
@@ -157,12 +179,14 @@ function Home() {
               ))}
             </ul>
 
-            <Link
-              to="/signup"
-              className="mt-8 inline-block rounded-xl bg-white px-7 py-3.5 font-semibold text-slate-950 hover:bg-indigo-100"
-            >
-              Join ShipPact
-            </Link>
+            {!user && (
+              <Link
+                to="/signup"
+                className="mt-8 inline-block rounded-xl bg-white px-7 py-3.5 font-semibold text-slate-950 hover:bg-indigo-100"
+              >
+                Join ShipPact
+              </Link>
+            )}
           </div>
         </div>
       </section>
