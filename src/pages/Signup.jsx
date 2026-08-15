@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { isApprovedSrmEmail } from '../lib/srmVerification'
 
 function Signup() {
   const [fullName, setFullName] = useState('')
@@ -15,12 +14,6 @@ function Signup() {
     setLoading(true)
     setMessage('')
     setErrorMessage('')
-
-    if (!isApprovedSrmEmail(email)) {
-      setErrorMessage('Please sign up using your official @srmist.edu.in email address.')
-      setLoading(false)
-      return
-    }
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -87,7 +80,7 @@ function Signup() {
               htmlFor="email"
               className="mb-2 block text-sm font-medium text-slate-300"
             >
-              College email address
+              Email address
             </label>
 
             <input
@@ -95,12 +88,12 @@ function Signup() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="student@srmist.edu.in"
+              placeholder="you@example.com"
               required
               className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-indigo-400"
             />
             <p className="mt-2 text-xs text-slate-500">
-              New accounts require a confirmed @srmist.edu.in address.
+              Any email is welcome. Confirmed @srmist.edu.in accounts receive the Verified SRM Student badge.
             </p>
           </div>
 
