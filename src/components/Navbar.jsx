@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Link,
   useLocation,
@@ -9,6 +9,8 @@ import { supabase } from '../lib/supabase'
 function Navbar() {
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [accountOpen, setAccountOpen] = useState(false)
+  const accountMenuRef = useRef(null)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -37,7 +39,19 @@ function Navbar() {
 
   useEffect(() => {
     setMenuOpen(false)
+    setAccountOpen(false)
   }, [location.pathname])
+
+  useEffect(() => {
+    function closeAccountMenu(event) {
+      if (!accountMenuRef.current?.contains(event.target)) {
+        setAccountOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', closeAccountMenu)
+    return () => document.removeEventListener('mousedown', closeAccountMenu)
+  }, [])
 
   async function handleLogout() {
     const { error } = await supabase.auth.signOut()
@@ -48,6 +62,7 @@ function Navbar() {
     }
 
     setMenuOpen(false)
+    setAccountOpen(false)
     navigate('/')
   }
 
@@ -82,40 +97,57 @@ function Navbar() {
             <>
               <div className="mx-2 h-6 w-px bg-slate-700" />
 
-              <Link to="/profile" className={navigationLink}>
-                My Profile
-              </Link>
-
-              <Link to="/my-teams" className={navigationLink}>
-                My Teams
-              </Link>
-
-              <Link to="/my-requests" className={navigationLink}>
-                My Requests
-              </Link>
-
               <Link to="/messages" className={navigationLink}>
                 Messages
               </Link>
 
-              <Link
-                to="/applications"
-                className={navigationLink}
-              >
-                Applications
-              </Link>
+              <div ref={accountMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAccountOpen((current) => !current)}
+                  aria-expanded={accountOpen}
+                  aria-haspopup="menu"
+                  className="flex max-w-52 items-center gap-3 rounded-xl border border-slate-700 px-3 py-2 text-left text-white hover:border-indigo-400"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 font-bold text-indigo-300">
+                    {(user.user_metadata?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-semibold">
+                    {user.user_metadata?.full_name || user.email}
+                  </span>
+                  <span className={`text-xs text-slate-400 transition ${accountOpen ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
+                </button>
 
-              <span className="max-w-32 truncate px-2 text-sm text-slate-400">
-                {user.user_metadata?.full_name || user.email}
-              </span>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="rounded-lg border border-slate-700 px-4 py-2 font-semibold text-white hover:border-indigo-400"
-              >
-                Log Out
-              </button>
+                {accountOpen && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full mt-3 w-60 rounded-2xl border border-slate-700 bg-slate-900 p-2 shadow-2xl shadow-black/40"
+                  >
+                    <Link to="/profile" className={`block ${navigationLink}`}>
+                      My Profile
+                    </Link>
+                    <Link to="/my-teams" className={`block ${navigationLink}`}>
+                      My Teams
+                    </Link>
+                    <Link to="/my-requests" className={`block ${navigationLink}`}>
+                      My Requests
+                    </Link>
+                    <Link to="/applications" className={`block ${navigationLink}`}>
+                      Applications
+                    </Link>
+                    <div className="my-2 border-t border-slate-700" />
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="w-full rounded-lg px-3 py-2 text-left font-semibold text-red-400 hover:bg-red-500/10"
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <>
