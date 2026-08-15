@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import BrowseTeams from './pages/BrowseTeams'
@@ -33,6 +34,7 @@ function App() {
           <Route path="/my-requests" element={<MyRequests />} />
         </Routes>
       </div>
+      <Analytics />
     </BrowserRouter>
   )
 }
