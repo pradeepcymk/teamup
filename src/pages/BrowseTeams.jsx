@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import FriendlyState from '../components/FriendlyState'
 
 function BrowseTeams() {
   const [teams, setTeams] = useState([])
@@ -226,11 +227,7 @@ function BrowseTeams() {
           </div>
         )}
 
-        {errorMessage && (
-          <p className="mt-12 rounded-xl bg-red-500/10 p-4 text-red-400">
-            {errorMessage}
-          </p>
-        )}
+        {errorMessage && <div className="mt-10"><FriendlyState icon="network" eyebrow="Connection problem" title="Teams could not load" description="We couldn’t reach ShipPact’s team service. Check your connection and try again." actionLabel="Try again" onAction={() => window.location.reload()} compact /></div>}
 
         {!loading &&
           !errorMessage &&

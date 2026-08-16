@@ -15,6 +15,9 @@ import EditTeam from './pages/EditTeam'
 import MyRequests from './pages/MyRequests'
 import Messages from './pages/Messages'
 import Onboarding from './pages/Onboarding'
+import AdminDashboard from './pages/AdminDashboard'
+import NotFound from './pages/NotFound'
+import AdminRoute from './components/AdminRoute'
 
 function App() {
   return (
@@ -45,6 +48,8 @@ function App() {
           <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/messages/:teamId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><AdminRoute><AdminDashboard /></AdminRoute></ProtectedRoute>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
       <Analytics />

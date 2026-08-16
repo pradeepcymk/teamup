@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import SrmVerifiedBadge from '../components/SrmVerifiedBadge'
 import TeamLifecycleBadge from '../components/TeamLifecycleBadge'
+import FriendlyState from '../components/FriendlyState'
 
 function TeamDetails() {
   const { id } = useParams()
@@ -14,6 +15,12 @@ function TeamDetails() {
   const [teamMembers, setTeamMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const [loadErrorType, setLoadErrorType] = useState('')
+  const [showReportForm, setShowReportForm] = useState(false)
+  const [reportReason, setReportReason] = useState('misleading')
+  const [reportDetails, setReportDetails] = useState('')
+  const [reporting, setReporting] = useState(false)
+  const [reportMessage, setReportMessage] = useState('')
   const [showApplicationForm, setShowApplicationForm] = useState(false)
 const [requestedRole, setRequestedRole] = useState('')
 const [applicationMessage, setApplicationMessage] = useState('')
@@ -36,6 +43,7 @@ const [successMessage, setSuccessMessage] = useState('')
         .single()
 
       if (teamError) {
+        setLoadErrorType(teamError.code === 'PGRST116' ? 'missing' : 'network')
         setErrorMessage(teamError.message)
         setLoading(false)
         return
@@ -139,6 +147,16 @@ setLoading(false)
     loadTeam()
   }, [id])
 
+  async function handleReport(event) {
+    event.preventDefault()
+    setReporting(true)
+    setReportMessage('')
+    const { error } = await supabase.from('reports').insert({ target_type: 'team', target_id: String(team.id), reason: reportReason, details: reportDetails.trim() || null })
+    if (error) setReportMessage(`Could not submit report: ${error.message}`)
+    else { setReportMessage('Report submitted. An administrator will review it.'); setShowReportForm(false); setReportDetails('') }
+    setReporting(false)
+  }
+
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
@@ -149,21 +167,8 @@ setLoading(false)
 
   if (errorMessage || !team) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-slate-950 px-6 text-white">
-        <h1 className="text-3xl font-bold">
-          Team not found
-        </h1>
-
-        <p className="mt-3 text-red-400">
-          {errorMessage}
-        </p>
-
-        <Link
-          to="/teams"
-          className="mt-6 rounded-xl bg-indigo-500 px-5 py-3 font-semibold"
-        >
-          Back to Teams
-        </Link>
+      <main className="flex min-h-screen items-center bg-slate-950 px-6 pb-16 pt-36 text-white">
+        <div className="mx-auto w-full max-w-3xl"><FriendlyState icon={loadErrorType === 'missing' ? 'missing' : 'network'} eyebrow={loadErrorType === 'missing' ? 'Listing unavailable' : 'Connection problem'} title={loadErrorType === 'missing' ? 'This team could not be found' : 'The team could not load'} description={loadErrorType === 'missing' ? 'It may have been removed or the link may be incorrect.' : 'We couldn’t reach ShipPact. Check your connection and try again.'} actionLabel={loadErrorType === 'missing' ? 'Browse teams' : 'Try again'} actionTo={loadErrorType === 'missing' ? '/teams' : undefined} onAction={loadErrorType === 'network' ? () => window.location.reload() : undefined} secondaryLabel="Go home" secondaryTo="/" /></div>
       </main>
     )
   }
@@ -171,6 +176,11 @@ setLoading(false)
   const isCreator = currentUser?.id === team.creator_id
   const canMessageTeam =
     isCreator || existingRequest?.status === 'accepted'
+  const isExpired = Boolean(team.deadline && new Date(`${team.deadline}T23:59:59`) < new Date())
+
+  if (isExpired && !canMessageTeam) {
+    return <main className="flex min-h-screen items-center px-6 pb-16 pt-36 text-white"><div className="mx-auto w-full max-w-3xl"><FriendlyState icon="expired" eyebrow={team.event_name} title="This team listing has expired" description="Its application deadline has passed, so it is no longer accepting requests. Explore active teams instead." actionLabel="Find active teams" actionTo="/teams" secondaryLabel="Go home" secondaryTo="/" /></div></main>
+  }
 
  function handleJoinClick() {
   if (!currentUser) {
@@ -584,6 +594,19 @@ async function handleApplicationSubmit(event) {
                 </a>
               )}
             </div>
+
+            {!isCreator && (
+              <div className="mt-7 border-t border-slate-800 pt-6">
+                {!showReportForm ? <button type="button" onClick={() => setShowReportForm(true)} className="text-sm font-semibold text-slate-500 hover:text-rose-300">Report this listing</button> : (
+                  <form onSubmit={handleReport} className="space-y-4">
+                    <div><label className="mb-2 block text-sm font-medium text-slate-300">Reason</label><select value={reportReason} onChange={(event) => setReportReason(event.target.value)} className="w-full rounded-xl border border-slate-700 px-4 py-3"><option value="misleading">Misleading information</option><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="unsafe">Unsafe content</option><option value="other">Other</option></select></div>
+                    <div><label className="mb-2 block text-sm font-medium text-slate-300">Details <span className="text-slate-500">(optional)</span></label><textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} maxLength="1000" rows="3" className="w-full rounded-xl border border-slate-700 px-4 py-3" placeholder="Help the admin understand the issue." /></div>
+                    <div className="flex gap-2"><button disabled={reporting} className="app-button bg-rose-500/80 text-sm hover:bg-rose-500 disabled:opacity-50">{reporting ? 'Submitting...' : 'Submit report'}</button><button type="button" onClick={() => setShowReportForm(false)} className="app-button border border-slate-700 text-sm text-slate-300">Cancel</button></div>
+                  </form>
+                )}
+                {reportMessage && <p className={`mt-3 text-sm ${reportMessage.startsWith('Could') ? 'text-rose-300' : 'text-emerald-300'}`}>{reportMessage}</p>}
+              </div>
+            )}
           </aside>
         </div>
       </section>

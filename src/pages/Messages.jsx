@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import FriendlyState from '../components/FriendlyState'
 
 function Messages() {
   const { teamId } = useParams()
@@ -16,6 +17,7 @@ function Messages() {
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [sending, setSending] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [unauthorizedTeam, setUnauthorizedTeam] = useState(false)
 
   useEffect(() => {
     async function loadTeams() {
@@ -67,6 +69,12 @@ function Messages() {
       const requestedTeam = availableTeams.find(
         (team) => String(team.id) === String(teamId)
       )
+      if (teamId && !requestedTeam) {
+        setUnauthorizedTeam(true)
+        setSelectedTeamId('')
+        setLoadingTeams(false)
+        return
+      }
       const initialTeamId = requestedTeam?.id || availableTeams[0]?.id || ''
 
       setSelectedTeamId(initialTeamId)
@@ -157,6 +165,7 @@ function Messages() {
   }, [messages])
 
   function chooseTeam(id) {
+    setUnauthorizedTeam(false)
     setSelectedTeamId(id)
     navigate(`/messages/${id}`)
   }
@@ -198,13 +207,9 @@ function Messages() {
           Private conversations for teams you have joined.
         </p>
 
-        {errorMessage && (
-          <p className="mt-6 rounded-xl bg-red-500/10 p-4 text-red-400">
-            {errorMessage}
-          </p>
-        )}
+        {errorMessage && !loadingTeams && <div className="mt-8"><FriendlyState icon="network" eyebrow="Connection problem" title="Messages could not load" description="We couldn’t reach ShipPact’s message service. Check your connection and refresh the page." actionLabel="Try again" onAction={() => window.location.reload()} compact /></div>}
 
-        {loadingTeams ? (
+        {errorMessage ? null : loadingTeams ? (
           <div className="surface-card mt-10 grid overflow-hidden rounded-2xl lg:grid-cols-[280px_1fr]" aria-label="Loading messages">
             <div className="border-r border-slate-800 p-5">
               <div className="skeleton h-4 w-24 rounded" />
@@ -220,6 +225,8 @@ function Messages() {
               <div className="skeleton mt-32 h-12 w-full rounded-xl" />
             </div>
           </div>
+        ) : unauthorizedTeam ? (
+          <div className="mt-10"><FriendlyState icon="lock" eyebrow="Private team chat" title="You don’t have access to this conversation" description="Only the team creator and accepted members can read or send messages in this chat." actionLabel="Open your messages" actionTo="/messages" secondaryLabel="Browse teams" secondaryTo="/teams" /></div>
         ) : teams.length === 0 ? (
           <div className="surface-card mt-10 rounded-2xl px-6 py-9 text-center">
             <div className="empty-visual" aria-hidden="true">

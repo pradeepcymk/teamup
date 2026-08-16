@@ -9,6 +9,7 @@ import NotificationBell from './NotificationBell'
 
 function Navbar() {
   const [user, setUser] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   const accountMenuRef = useRef(null)
@@ -37,6 +38,15 @@ function Navbar() {
       subscription.unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    async function loadAdminRole() {
+      if (!user) { setIsAdmin(false); return }
+      const { data, error } = await supabase.rpc('is_admin')
+      setIsAdmin(!error && data === true)
+    }
+    loadAdminRole()
+  }, [user])
 
   useEffect(() => {
     setMenuOpen(false)
@@ -143,6 +153,7 @@ function Navbar() {
                     <Link to="/applications" className={`block ${navigationLink}`}>
                       Applications
                     </Link>
+                    {isAdmin && <Link to="/admin" className={`block ${navigationLink}`}>Admin Dashboard</Link>}
                     <div className="my-2 border-t border-slate-700" />
                     <button
                       type="button"
@@ -261,6 +272,8 @@ function Navbar() {
                 >
                   Applications
                 </Link>
+
+                {isAdmin && <Link to="/admin" className={navigationLink}>Admin Dashboard</Link>}
 
                 <button
                   type="button"
