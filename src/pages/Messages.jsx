@@ -7,6 +7,7 @@ function Messages() {
   const { teamId } = useParams()
   const navigate = useNavigate()
   const bottomRef = useRef(null)
+  const messageListRef = useRef(null)
 
   const [currentUser, setCurrentUser] = useState(null)
   const [teams, setTeams] = useState([])
@@ -161,7 +162,14 @@ function Messages() {
   }, [loadMessages, selectedTeamId])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const messageList = messageListRef.current
+
+    if (messageList) {
+      messageList.scrollTo({
+        top: messageList.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
   }, [messages])
 
   function chooseTeam(id) {
@@ -243,8 +251,8 @@ function Messages() {
             </Link>
           </div>
         ) : (
-          <div className="surface-card mt-10 grid h-[clamp(500px,62vh,680px)] overflow-hidden rounded-2xl lg:grid-cols-[290px_1fr]">
-            <aside className="border-b border-slate-800 bg-slate-800/35 p-4 lg:border-b-0 lg:border-r">
+          <div className="surface-card mt-10 grid h-[clamp(500px,62vh,680px)] min-h-0 grid-rows-[minmax(0,1fr)] overflow-hidden rounded-2xl lg:grid-cols-[290px_minmax(0,1fr)]">
+            <aside className="min-h-0 overflow-y-auto overscroll-contain border-b border-slate-800 bg-slate-800/35 p-4 lg:border-b-0 lg:border-r">
               <p className="px-3 pb-3 text-sm font-semibold text-slate-500">Your teams</p>
               <div className="space-y-2">
                 {teams.map((team) => (
@@ -276,7 +284,10 @@ function Messages() {
                 </div>
               </header>
 
-              <div className="flex-1 space-y-4 overflow-y-auto p-6">
+              <div
+                ref={messageListRef}
+                className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-6"
+              >
                 {loadingMessages ? (
                   <p className="text-slate-500">Loading messages...</p>
                 ) : messages.length === 0 ? (
