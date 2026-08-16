@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 function NotificationBell({ userId }) {
   const navigate = useNavigate()
   const menuRef = useRef(null)
+  const channelInstanceRef = useRef(Math.random().toString(36).slice(2))
   const [notifications, setNotifications] = useState([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -27,7 +28,7 @@ function NotificationBell({ userId }) {
     supabase.rpc('generate_deadline_notifications').then(() => loadNotifications())
 
     const channel = supabase
-      .channel(`notifications-${userId}`)
+      .channel(`notifications-${userId}-${channelInstanceRef.current}`)
       .on(
         'postgres_changes',
         {
