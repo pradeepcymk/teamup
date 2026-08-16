@@ -5,6 +5,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import NotificationBell from './NotificationBell'
 
 function Navbar() {
   const [user, setUser] = useState(null)
@@ -101,6 +102,8 @@ function Navbar() {
                 Messages
               </Link>
 
+              <NotificationBell userId={user.id} />
+
               <div ref={accountMenuRef} className="relative">
                 <button
                   type="button"
@@ -167,14 +170,16 @@ function Navbar() {
           )}
         </div>
 
-        {/* Mobile menu button */}
-        <button
+        {/* Mobile notifications and menu button */}
+        <div className="flex items-center gap-2 xl:hidden">
+          {user && <NotificationBell userId={user.id} />}
+          <button
           type="button"
           onClick={() => setMenuOpen((current) => !current)}
           aria-label="Toggle navigation menu"
           aria-expanded={menuOpen}
-          className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-lg border border-slate-700 text-white hover:border-indigo-400 xl:hidden"
-        >
+          className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-lg border border-slate-700 text-white hover:border-indigo-400"
+          >
           <span
             className={`h-0.5 w-5 bg-current transition ${
               menuOpen ? 'translate-y-2 rotate-45' : ''
@@ -192,7 +197,8 @@ function Navbar() {
               menuOpen ? '-translate-y-2 -rotate-45' : ''
             }`}
           />
-        </button>
+          </button>
+        </div>
       </div>
 
       {/* Mobile and tablet menu */}
