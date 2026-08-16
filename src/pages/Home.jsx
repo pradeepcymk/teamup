@@ -62,33 +62,33 @@ function Home() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 px-6 pb-20 pt-32 text-white md:px-12">
-      <section className="relative mx-auto grid min-h-[82vh] max-w-7xl items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+      <section className="relative mx-auto grid max-w-7xl items-start gap-12 pt-14 sm:pt-16 lg:min-h-[82vh] lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:pt-0">
         <div className="pointer-events-none absolute -right-40 top-0 h-96 w-96 rounded-full bg-indigo-500/15 blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
         <div className="relative max-w-4xl">
-          <div className="hero-kicker hero-enter mb-7 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-200">
+          <div className="hero-kicker hero-enter mb-6 inline-flex max-w-full items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-3.5 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-indigo-200 sm:mb-7 sm:px-4 sm:text-xs sm:tracking-[0.22em]">
             <span className="h-2 w-2 rounded-full bg-green-400" />
             Built for SRM campus builders
           </div>
 
-          <h1 className="hero-enter-delay max-w-6xl text-5xl font-bold leading-[1.04] tracking-[-0.045em] md:text-7xl">
-            <span className="md:block">Find teammates</span>{' '}
-            <span className="md:block">
+          <h1 className="hero-enter-delay max-w-6xl text-[2.65rem] font-bold leading-[1.06] tracking-[-0.045em] sm:text-5xl md:text-7xl">
+            <span className="block">Find teammates</span>{' '}
+            <span className="mt-1 block sm:mt-0">
               who{' '}
-              <span className="hero-gradient-text whitespace-nowrap">
+              <span className="hero-gradient-text sm:whitespace-nowrap">
                 actually show up.
               </span>
             </span>
           </h1>
 
-          <p className="hero-enter-late mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
+          <p className="hero-enter-late mt-6 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8 md:mt-7 md:text-xl">
             ShipPact helps SRM students form committed teams for hackathons
             and semester projects—matched by skills, availability and
             deadlines.
           </p>
 
-          <div className="hero-enter-late mt-9 flex flex-col gap-4 sm:flex-row">
+          <div className="hero-enter-late mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:gap-4">
             <Link
               to="/teams"
               className="rounded-xl bg-indigo-500 px-7 py-3.5 text-center font-semibold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-400"
@@ -104,7 +104,7 @@ function Home() {
             </Link>
           </div>
 
-          <p className="mt-5 text-sm text-slate-500">
+          <p className="mt-5 text-xs leading-5 text-slate-500 sm:text-sm">
             Find the right role. Set the commitment. Ship on time.
           </p>
         </div>
