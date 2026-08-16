@@ -191,6 +191,15 @@ function Profile() {
   const labelStyle = 'mb-2 block text-sm font-medium text-slate-300'
   const skills = profile.skills.split(',').map((item) => item.trim()).filter(Boolean)
   const roles = profile.preferred_roles.split(',').map((item) => item.trim()).filter(Boolean)
+  const completionItems = [
+    { label: 'Skills', complete: skills.length > 0 },
+    { label: 'Availability', complete: Boolean(profile.availability) },
+    { label: 'GitHub or portfolio', complete: Boolean(profile.github_url || profile.linkedin_url) },
+    { label: 'Private contact', complete: Boolean(profile.contact_value.trim()) },
+    { label: 'Bio', complete: Boolean(profile.bio.trim()) },
+  ]
+  const completedItems = completionItems.filter((item) => item.complete).length
+  const completionPercentage = Math.round((completedItems / completionItems.length) * 100)
 
   return (
     <main className="min-h-screen bg-slate-950 px-6 pb-16 pt-32 text-white">
@@ -230,6 +239,48 @@ function Profile() {
           <p className="mt-6 rounded-lg bg-green-500/10 p-3 text-green-400">
             {message}
           </p>
+        )}
+
+        {!isEditing && (
+          <section className="mt-8 rounded-2xl border border-indigo-400/20 bg-indigo-500/5 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="font-semibold text-white">Profile completion</p>
+                <p className="mt-1 text-sm text-slate-400">
+                  Complete profiles help creators make confident decisions.
+                </p>
+              </div>
+              <span className="text-2xl font-bold text-indigo-300">{completionPercentage}%</span>
+            </div>
+
+            <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-800">
+              <div
+                className="h-full rounded-full bg-indigo-500 transition-all"
+                style={{ width: `${completionPercentage}%` }}
+              />
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {completionItems.map((item) => (
+                <span
+                  key={item.label}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${item.complete ? 'bg-green-500/10 text-green-400' : 'bg-slate-800 text-slate-400'}`}
+                >
+                  {item.complete ? '✓' : '+'} {item.label}
+                </span>
+              ))}
+            </div>
+
+            {completionPercentage < 100 && (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="mt-5 font-semibold text-indigo-300 hover:text-indigo-200"
+              >
+                Complete your profile →
+              </button>
+            )}
+          </section>
         )}
 
         {!isEditing ? (

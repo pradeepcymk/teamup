@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import TeamLifecycleBadge from '../components/TeamLifecycleBadge'
+import { lifecycleLabels, lifecycleStages } from '../lib/teamLifecycle'
 
 function MyTeams() {
   const navigate = useNavigate()
@@ -44,26 +46,22 @@ function MyTeams() {
     loadTeams()
   }, [loadTeams])
 
-  async function toggleTeamStatus(team) {
+  async function updateLifecycle(team, lifecycleStage) {
     setErrorMessage('')
     setSuccessMessage('')
 
     if (
-      team.status === 'closed' &&
+      lifecycleStage === 'recruiting' &&
       team.current_members >= team.maximum_members
     ) {
       setErrorMessage(
-        'This team is full. Increase its maximum members before reopening it.'
+        'This team is full. Increase its maximum members before recruiting again.'
       )
       return
     }
 
-    const newStatus = team.status === 'open' ? 'closed' : 'open'
-
     const confirmed = window.confirm(
-      newStatus === 'closed'
-        ? 'Close applications for this team?'
-        : 'Reopen applications for this team?'
+      `Move this team to “${lifecycleLabels[lifecycleStage]}”?`
     )
 
     if (!confirmed) {
@@ -75,7 +73,8 @@ function MyTeams() {
     const { error } = await supabase
       .from('team_posts')
       .update({
-        status: newStatus,
+        lifecycle_stage: lifecycleStage,
+        status: lifecycleStage === 'recruiting' ? 'open' : 'closed',
         updated_at: new Date().toISOString(),
       })
       .eq('id', team.id)
@@ -86,11 +85,7 @@ function MyTeams() {
       return
     }
 
-    setSuccessMessage(
-      newStatus === 'closed'
-        ? 'Team applications closed.'
-        : 'Team applications reopened.'
-    )
+    setSuccessMessage(`Team moved to ${lifecycleLabels[lifecycleStage]}.`)
 
     setProcessingId(null)
     await loadTeams()
@@ -178,15 +173,7 @@ function MyTeams() {
                   </h2>
                 </div>
 
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-                    team.status === 'open'
-                      ? 'bg-green-500/10 text-green-400'
-                      : 'bg-red-500/10 text-red-400'
-                  }`}
-                >
-                  {team.status}
-                </span>
+                <TeamLifecycleBadge stage={team.lifecycle_stage} />
               </div>
 
               <p className="mt-4 line-clamp-3 leading-7 text-slate-400">
@@ -242,22 +229,26 @@ function MyTeams() {
                   Edit Team
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={() => toggleTeamStatus(team)}
+              </div>
+
+              <div className="mt-6 border-t border-slate-800 pt-5">
+                <label htmlFor={`lifecycle-${team.id}`} className="text-sm font-semibold text-slate-300">
+                  Project stage
+                </label>
+                <select
+                  id={`lifecycle-${team.id}`}
+                  value={team.lifecycle_stage || 'recruiting'}
+                  onChange={(event) => updateLifecycle(team, event.target.value)}
                   disabled={processingId === team.id}
-                  className={`rounded-xl px-4 py-3 font-semibold disabled:opacity-50 ${
-                    team.status === 'open'
-                      ? 'bg-red-600 hover:bg-red-500'
-                      : 'bg-green-600 hover:bg-green-500'
-                  }`}
+                  className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-indigo-400 disabled:opacity-50"
                 >
-                  {processingId === team.id
-                    ? 'Updating...'
-                    : team.status === 'open'
-                      ? 'Close Applications'
-                      : 'Reopen Applications'}
-                </button>
+                  {lifecycleStages.map((stage) => (
+                    <option key={stage} value={stage}>{lifecycleLabels[stage]}</option>
+                  ))}
+                </select>
+                <p className="mt-2 text-xs text-slate-500">
+                  Only Recruiting teams appear in Find Teammates and accept applications.
+                </p>
               </div>
             </article>
           ))}

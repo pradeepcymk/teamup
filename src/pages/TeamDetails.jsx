@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import SrmVerifiedBadge from '../components/SrmVerifiedBadge'
+import TeamLifecycleBadge from '../components/TeamLifecycleBadge'
 
 function TeamDetails() {
   const { id } = useParams()
@@ -245,15 +246,7 @@ async function handleApplicationSubmit(event) {
                 </h1>
               </div>
 
-              <span
-                className={`rounded-full px-3 py-1 text-sm font-semibold ${
-                  team.status === 'open'
-                    ? 'bg-green-500/10 text-green-400'
-                    : 'bg-red-500/10 text-red-400'
-                }`}
-              >
-                {team.status === 'open' ? 'Open' : 'Closed'}
-              </span>
+              <TeamLifecycleBadge stage={team.lifecycle_stage} />
             </div>
 
             <p className="mt-6 whitespace-pre-line leading-8 text-slate-300">
