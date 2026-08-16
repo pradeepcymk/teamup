@@ -67,12 +67,12 @@ function Home() {
         <div className="pointer-events-none absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
         <div className="relative max-w-4xl">
-          <div className="hero-kicker mb-7 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-200">
+          <div className="hero-kicker hero-enter mb-7 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-200">
             <span className="h-2 w-2 rounded-full bg-green-400" />
             Built for SRM campus builders
           </div>
 
-          <h1 className="max-w-6xl text-5xl font-bold leading-[1.04] tracking-[-0.045em] md:text-7xl">
+          <h1 className="hero-enter-delay max-w-6xl text-5xl font-bold leading-[1.04] tracking-[-0.045em] md:text-7xl">
             <span className="md:block">Find teammates</span>{' '}
             <span className="md:block">
               who{' '}
@@ -82,13 +82,13 @@ function Home() {
             </span>
           </h1>
 
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
+          <p className="hero-enter-late mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
             ShipPact helps SRM students form committed teams for hackathons
             and semester projects—matched by skills, availability and
             deadlines.
           </p>
 
-          <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+          <div className="hero-enter-late mt-9 flex flex-col gap-4 sm:flex-row">
             <Link
               to="/teams"
               className="rounded-xl bg-indigo-500 px-7 py-3.5 text-center font-semibold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-400"
@@ -109,7 +109,7 @@ function Home() {
           </p>
         </div>
 
-        <div className="signal-stage relative hidden lg:block" aria-hidden="true">
+        <div className="signal-stage hero-enter-late relative hidden lg:block" aria-hidden="true">
           <div className="signal-card left-[7%] top-[13%] w-[78%] rounded-3xl p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -171,7 +171,7 @@ function Home() {
           {benefits.map((benefit) => (
             <article
               key={benefit.number}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6"
+              className="interactive-card rounded-2xl border border-slate-800 bg-slate-900/80 p-6"
             >
               <p className="font-mono text-sm text-indigo-400">
                 {benefit.number}

@@ -132,12 +132,11 @@ function BrowseTeams() {
             </p>
           </div>
 
-          <Link
-            to="/create-team"
-            className="rounded-xl bg-indigo-500 px-5 py-3 text-center font-semibold hover:bg-indigo-400"
-          >
-            Form a Team
-          </Link>
+          {!loading && teams.length > 0 && (
+            <Link to="/create-team" className="app-button bg-indigo-500 text-center hover:bg-indigo-400">
+              Form a Team
+            </Link>
+          )}
         </div>
 
         <div className="mt-10 rounded-2xl border border-slate-800 bg-slate-900 p-6">
@@ -210,9 +209,21 @@ function BrowseTeams() {
         </div>
 
         {loading && (
-          <p className="mt-12 text-slate-400">
-            Loading teams...
-          </p>
+          <div className="mt-10 grid gap-6 md:grid-cols-2" aria-label="Loading teams">
+            {[0, 1, 2, 3].map((item) => (
+              <div key={item} className="surface-card rounded-2xl p-6">
+                <div className="skeleton h-4 w-28 rounded-full" />
+                <div className="skeleton mt-5 h-8 w-3/5 rounded-lg" />
+                <div className="skeleton mt-5 h-4 w-full rounded" />
+                <div className="skeleton mt-3 h-4 w-4/5 rounded" />
+                <div className="mt-7 flex gap-2">
+                  <div className="skeleton h-7 w-20 rounded-full" />
+                  <div className="skeleton h-7 w-24 rounded-full" />
+                </div>
+                <div className="skeleton mt-8 h-12 w-full rounded-xl" />
+              </div>
+            ))}
+          </div>
         )}
 
         {errorMessage && (
@@ -224,8 +235,13 @@ function BrowseTeams() {
         {!loading &&
           !errorMessage &&
           teams.length === 0 && (
-            <div className="mt-12 rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
-              <h2 className="text-2xl font-bold">
+            <div className="surface-card mt-10 rounded-2xl px-6 py-9 text-center">
+              <div className="empty-visual" aria-hidden="true">
+                <svg viewBox="0 0 24 24" className="h-8 w-8 fill-none stroke-current" strokeWidth="1.6">
+                  <path d="M16 18.5c0-2.2-1.8-4-4-4H7c-2.2 0-4 1.8-4 4M9.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM17 8v6m-3-3h6" strokeLinecap="round" />
+                </svg>
+              </div>
+              <h2 className="mt-5 text-2xl font-bold">
                 No open teams yet
               </h2>
 
@@ -235,7 +251,7 @@ function BrowseTeams() {
 
               <Link
                 to="/create-team"
-                className="mt-6 inline-block rounded-xl bg-indigo-500 px-5 py-3 font-semibold hover:bg-indigo-400"
+                className="app-button mt-6 bg-indigo-500 hover:bg-indigo-400"
               >
                 Form a Team
               </Link>
@@ -246,8 +262,13 @@ function BrowseTeams() {
           !errorMessage &&
           teams.length > 0 &&
           filteredTeams.length === 0 && (
-            <div className="mt-12 rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
-              <h2 className="text-2xl font-bold">
+            <div className="surface-card mt-10 rounded-2xl px-6 py-9 text-center">
+              <div className="empty-visual" aria-hidden="true">
+                <svg viewBox="0 0 24 24" className="h-8 w-8 fill-none stroke-current" strokeWidth="1.6">
+                  <circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5M8 10.5h5" strokeLinecap="round" />
+                </svg>
+              </div>
+              <h2 className="mt-5 text-2xl font-bold">
                 No matching teams
               </h2>
 
@@ -269,7 +290,7 @@ function BrowseTeams() {
           {filteredTeams.map((team) => (
             <article
               key={team.id}
-              className="flex flex-col rounded-2xl border border-slate-800 bg-slate-900 p-6"
+              className="interactive-card flex flex-col rounded-2xl border border-slate-800 bg-slate-900 p-6"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>

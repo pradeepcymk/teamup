@@ -180,8 +180,21 @@ function Profile() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
-        Loading profile...
+      <main className="min-h-screen bg-slate-950 px-6 pb-16 pt-32 text-white">
+        <section className="mx-auto max-w-3xl" aria-label="Loading profile">
+          <div className="skeleton h-4 w-36 rounded" />
+          <div className="skeleton mt-5 h-11 w-52 rounded-lg" />
+          <div className="skeleton mt-5 h-5 w-3/5 rounded" />
+          <div className="surface-card mt-10 rounded-2xl p-6">
+            <div className="flex items-center gap-5">
+              <div className="skeleton h-20 w-20 rounded-2xl" />
+              <div className="flex-1"><div className="skeleton h-8 w-52 rounded" /><div className="skeleton mt-4 h-4 w-36 rounded" /></div>
+            </div>
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              {[0, 1, 2, 3].map((item) => <div key={item} className="skeleton h-20 rounded-xl" />)}
+            </div>
+          </div>
+        </section>
       </main>
     )
   }
@@ -214,18 +227,12 @@ function Profile() {
           </div>
 
           {!isEditing && (
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(true)
-                setMessage('')
-              }}
-              aria-label="Edit profile"
-              title="Edit profile"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-700 text-slate-300 hover:border-indigo-400 hover:text-indigo-300"
-            >
-              <span aria-hidden="true">✎</span>
-            </button>
+            <div className="group relative">
+              <button type="button" onClick={() => { setIsEditing(true); setMessage('') }} aria-label="Edit profile" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-200 hover:border-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-200">
+                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current" strokeWidth="1.8"><path d="m14.7 5.3 4 4M4 20l3.8-.8L19.4 7.6a1.8 1.8 0 0 0 0-2.5l-.5-.5a1.8 1.8 0 0 0-2.5 0L4.8 16.2 4 20Z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+              <span role="tooltip" className="pointer-events-none absolute right-0 top-full z-10 mt-2 whitespace-nowrap rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-200 opacity-0 shadow-xl transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">Edit profile</span>
+            </div>
           )}
         </div>
 
@@ -286,11 +293,15 @@ function Profile() {
         {!isEditing ? (
           <article className="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
             <div className="border-b border-slate-800 p-8">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-3xl font-bold">
-                    {profile.full_name || 'Student'}
-                  </h2>
+              <div className="flex flex-wrap items-start justify-between gap-5">
+                <div className="flex items-start gap-5">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-indigo-400/25 bg-gradient-to-br from-indigo-500/25 to-cyan-400/10 text-3xl font-bold text-indigo-200 shadow-lg shadow-indigo-950/30">
+                    {(profile.full_name || 'Student').charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold">
+                      {profile.full_name || 'Student'}
+                    </h2>
                   {isSrmVerified && (
                     <div className="mt-3">
                       <SrmVerifiedBadge />
@@ -302,6 +313,7 @@ function Profile() {
                   <p className="mt-1 text-slate-500">
                     {profile.college || 'College not added'}
                   </p>
+                  </div>
                 </div>
 
                 <span className={`rounded-full px-3 py-1 text-sm font-semibold ${profile.looking_for_team ? 'bg-green-500/10 text-green-400' : 'bg-slate-800 text-slate-400'}`}>
@@ -316,14 +328,14 @@ function Profile() {
               )}
             </div>
 
-            <div className="grid gap-8 p-8 md:grid-cols-2">
+            <div className="grid gap-x-10 gap-y-0 p-8 md:grid-cols-2">
               <ProfileList title="Skills" items={skills} empty="No skills added" />
               <ProfileList title="Preferred roles" items={roles} empty="No roles added" accent />
 
-              <ProfileDetail label="Availability" value={profile.availability || 'Not specified'} />
+              <div className="mt-8 border-t border-slate-800 pt-7"><ProfileDetail label="Availability" value={profile.availability || 'Not specified'} /></div>
 
-              <div>
-                <p className="text-sm text-slate-500">Private team contact</p>
+              <div className="mt-8 border-t border-slate-800 pt-7">
+                <p className="text-sm font-medium text-slate-400">Private team contact</p>
                 <p className="mt-2 font-semibold text-slate-200">
                   {profile.contact_value
                     ? `${profile.contact_type}: ${profile.contact_value}`
@@ -334,8 +346,8 @@ function Profile() {
                 </p>
               </div>
 
-              <div>
-                <p className="text-sm text-slate-500">Links</p>
+              <div className="mt-8 border-t border-slate-800 pt-7 md:col-span-2">
+                <p className="text-sm font-medium text-slate-400">Links</p>
                 <div className="mt-2 flex flex-wrap gap-4">
                   {profile.github_url && <ProfileLink href={profile.github_url}>GitHub ↗</ProfileLink>}
                   {profile.linkedin_url && <ProfileLink href={profile.linkedin_url}>LinkedIn ↗</ProfileLink>}
@@ -457,7 +469,7 @@ function Field({ label, inputStyle, ...inputProps }) {
 function ProfileList({ title, items, empty, accent = false }) {
   return (
     <div>
-      <p className="text-sm text-slate-500">{title}</p>
+      <p className="text-sm font-medium text-slate-400">{title}</p>
       {items.length > 0 ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {items.map((item) => (
@@ -476,7 +488,7 @@ function ProfileList({ title, items, empty, accent = false }) {
 function ProfileDetail({ label, value }) {
   return (
     <div>
-      <p className="text-sm text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-400">{label}</p>
       <p className="mt-2 font-semibold text-slate-200">{value}</p>
     </div>
   )

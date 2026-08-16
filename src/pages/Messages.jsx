@@ -205,20 +205,39 @@ function Messages() {
         )}
 
         {loadingTeams ? (
-          <p className="mt-10 text-slate-400">Loading your teams...</p>
+          <div className="surface-card mt-10 grid overflow-hidden rounded-2xl lg:grid-cols-[280px_1fr]" aria-label="Loading messages">
+            <div className="border-r border-slate-800 p-5">
+              <div className="skeleton h-4 w-24 rounded" />
+              <div className="skeleton mt-6 h-16 w-full rounded-xl" />
+              <div className="skeleton mt-3 h-16 w-full rounded-xl" />
+            </div>
+            <div className="p-6">
+              <div className="skeleton h-7 w-40 rounded" />
+              <div className="mt-16 space-y-4">
+                <div className="skeleton h-14 w-2/5 rounded-2xl" />
+                <div className="skeleton ml-auto h-14 w-1/3 rounded-2xl" />
+              </div>
+              <div className="skeleton mt-32 h-12 w-full rounded-xl" />
+            </div>
+          </div>
         ) : teams.length === 0 ? (
-          <div className="mt-10 rounded-2xl border border-slate-800 bg-slate-900 p-10 text-center">
-            <h2 className="text-2xl font-bold">No team chats yet</h2>
+          <div className="surface-card mt-10 rounded-2xl px-6 py-9 text-center">
+            <div className="empty-visual" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="h-8 w-8 fill-none stroke-current" strokeWidth="1.6">
+                <path d="M20 15a3 3 0 0 1-3 3H9l-5 3v-3a3 3 0 0 1-2-3V7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8Z" strokeLinejoin="round" /><path d="M7 9h10M7 13h6" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h2 className="mt-5 text-2xl font-bold">No team chats yet</h2>
             <p className="mt-3 text-slate-400">
               A chat becomes available after you create a team or your application is accepted.
             </p>
-            <Link to="/teams" className="mt-6 inline-block rounded-xl bg-indigo-500 px-5 py-3 font-semibold hover:bg-indigo-400">
+            <Link to="/teams" className="app-button mt-6 bg-indigo-500 hover:bg-indigo-400">
               Find Teammates
             </Link>
           </div>
         ) : (
-          <div className="mt-10 grid min-h-[620px] overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 lg:grid-cols-[320px_1fr]">
-            <aside className="border-b border-slate-800 p-4 lg:border-b-0 lg:border-r">
+          <div className="surface-card mt-10 grid h-[clamp(500px,62vh,680px)] overflow-hidden rounded-2xl lg:grid-cols-[290px_1fr]">
+            <aside className="border-b border-slate-800 bg-slate-800/35 p-4 lg:border-b-0 lg:border-r">
               <p className="px-3 pb-3 text-sm font-semibold text-slate-500">Your teams</p>
               <div className="space-y-2">
                 {teams.map((team) => (
@@ -235,7 +254,7 @@ function Messages() {
               </div>
             </aside>
 
-            <div className="flex min-h-[620px] flex-col">
+            <div className="flex min-h-0 flex-col">
               <header className="border-b border-slate-800 px-6 py-5">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -255,8 +274,13 @@ function Messages() {
                   <p className="text-slate-500">Loading messages...</p>
                 ) : messages.length === 0 ? (
                   <div className="flex h-full items-center justify-center text-center">
-                    <div>
-                      <h3 className="text-xl font-bold">Start the conversation</h3>
+                    <div className="max-w-sm">
+                      <div className="empty-visual" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" className="h-8 w-8 fill-none stroke-current" strokeWidth="1.6">
+                          <path d="M20 15a3 3 0 0 1-3 3H9l-5 3v-3a3 3 0 0 1-2-3V7a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8Z" strokeLinejoin="round" /><path d="M8 11h.01M12 11h.01M16 11h.01" strokeLinecap="round" strokeWidth="2" />
+                        </svg>
+                      </div>
+                      <h3 className="mt-5 text-xl font-bold">Start the conversation</h3>
                       <p className="mt-2 text-slate-500">Coordinate your first task, meeting or deadline.</p>
                     </div>
                   </div>
