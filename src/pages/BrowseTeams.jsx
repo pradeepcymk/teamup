@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import FriendlyState from '../components/FriendlyState'
+import ShareTeamButtons from '../components/ShareTeamButtons'
 
 function BrowseTeams() {
   const [teams, setTeams] = useState([])
@@ -370,12 +371,10 @@ function BrowseTeams() {
                 </p>
               </div>
 
-              <Link
-                to={`/teams/${team.id}`}
-                className="mt-6 rounded-lg bg-indigo-500 px-4 py-2 text-center font-semibold hover:bg-indigo-400"
-              >
-                View Team
-              </Link>
+              <div className="mt-6 flex flex-col gap-3 border-t border-slate-800 pt-5">
+                <Link to={`/teams/${team.id}`} className="app-button bg-indigo-500 text-center hover:bg-indigo-400">View Team</Link>
+                <ShareTeamButtons team={team} compact />
+              </div>
             </article>
           ))}
         </div>

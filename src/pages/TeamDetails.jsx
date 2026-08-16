@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import SrmVerifiedBadge from '../components/SrmVerifiedBadge'
 import TeamLifecycleBadge from '../components/TeamLifecycleBadge'
 import FriendlyState from '../components/FriendlyState'
+import ShareTeamButtons from '../components/ShareTeamButtons'
 
 function TeamDetails() {
   const { id } = useParams()
@@ -258,6 +259,8 @@ async function handleApplicationSubmit(event) {
 
               <TeamLifecycleBadge stage={team.lifecycle_stage} />
             </div>
+
+            <ShareTeamButtons team={team} />
 
             <p className="mt-6 whitespace-pre-line leading-8 text-slate-300">
               {team.description}
