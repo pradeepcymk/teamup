@@ -71,11 +71,11 @@ function Navbar() {
     'rounded-lg px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800 hover:text-white'
 
   return (
-    <nav className="absolute left-0 top-0 z-50 w-full border-b border-slate-800/60 bg-slate-950/90 px-6 py-5 backdrop-blur-md md:px-12">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
+    <nav className="fixed left-0 top-0 z-50 w-full px-4 py-4 md:px-8">
+      <div className="glass-nav mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-4 py-3 md:px-5">
         <Link
           to="/"
-          className="text-2xl font-bold text-white"
+          className="brand-mark text-2xl font-bold tracking-tight text-white"
         >
           Ship<span className="text-indigo-400">Pact</span>
         </Link>
@@ -206,7 +206,7 @@ function Navbar() {
 
       {/* Mobile and tablet menu */}
       {menuOpen && (
-        <div className="mx-auto mt-5 max-w-7xl border-t border-slate-800 pt-5 xl:hidden">
+        <div className="glass-nav mx-auto mt-3 max-w-7xl rounded-2xl p-4 xl:hidden">
           <div className="flex flex-col gap-2">
             <Link to="/#how-it-works" className={navigationLink}>
               How It Works

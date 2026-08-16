@@ -19,7 +19,7 @@ import Onboarding from './pages/Onboarding'
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-slate-950">
+      <div className="shippact-shell min-h-screen">
         <Navbar />
 
         <Routes>

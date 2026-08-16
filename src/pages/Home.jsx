@@ -62,21 +62,21 @@ function Home() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 px-6 pb-20 pt-32 text-white md:px-12">
-      <section className="relative mx-auto flex min-h-[70vh] max-w-7xl items-center">
+      <section className="relative mx-auto grid min-h-[82vh] max-w-7xl items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="pointer-events-none absolute -right-40 top-0 h-96 w-96 rounded-full bg-indigo-500/15 blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-0 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
         <div className="relative max-w-4xl">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-indigo-300">
+          <div className="hero-kicker mb-7 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-200">
             <span className="h-2 w-2 rounded-full bg-green-400" />
             Built for SRM campus builders
           </div>
 
-          <h1 className="max-w-6xl text-5xl font-bold leading-tight tracking-tight md:text-7xl">
+          <h1 className="max-w-6xl text-5xl font-bold leading-[1.04] tracking-[-0.045em] md:text-7xl">
             <span className="md:block">Find teammates</span>{' '}
             <span className="md:block">
               who{' '}
-              <span className="whitespace-nowrap text-indigo-400">
+              <span className="hero-gradient-text whitespace-nowrap">
                 actually show up.
               </span>
             </span>
@@ -107,6 +107,46 @@ function Home() {
           <p className="mt-5 text-sm text-slate-500">
             Find the right role. Set the commitment. Ship on time.
           </p>
+        </div>
+
+        <div className="signal-stage relative hidden lg:block" aria-hidden="true">
+          <div className="signal-card left-[7%] top-[13%] w-[78%] rounded-3xl p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                <span className="signal-dot h-2 w-2 rounded-full bg-emerald-400 text-emerald-400" />
+                Live team signal
+              </div>
+              <span className="rounded-full bg-indigo-400/10 px-3 py-1 text-xs font-semibold text-indigo-300">
+                Recruiting
+              </span>
+            </div>
+            <p className="mt-7 text-2xl font-bold leading-tight">Build with people who commit.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Skills, availability and deadlines aligned before day one.</p>
+            <div className="mt-7 grid grid-cols-3 gap-3">
+              {['Verified', 'Matched', 'Ready'].map((label, index) => (
+                <div key={label} className="rounded-xl border border-slate-700/70 bg-slate-950/50 p-3">
+                  <p className="text-lg font-bold text-white">{['SRM', '92%', '4/4'][index]}</p>
+                  <p className="mt-1 text-xs text-slate-500">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="signal-card bottom-[10%] left-0 w-56 rounded-2xl p-4">
+            <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Commitment status</p>
+            <div className="mt-3 flex items-center gap-3">
+              <span className="signal-dot h-3 w-3 rounded-full bg-cyan-300 text-cyan-300" />
+              <p className="font-semibold text-cyan-100">Ready to ship</p>
+            </div>
+          </div>
+
+          <div className="signal-card bottom-[2%] right-[2%] w-52 rounded-2xl p-4">
+            <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Team pact</p>
+            <p className="mt-2 font-semibold text-white">4/4 builders confirmed</p>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-800">
+              <div className="h-full w-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-300" />
+            </div>
+          </div>
         </div>
       </section>
 
