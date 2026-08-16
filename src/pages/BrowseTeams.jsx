@@ -14,6 +14,18 @@ function BrowseTeams() {
 
   useEffect(() => {
     async function loadTeams() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        await supabase.from('onboarding_progress').upsert({
+          user_id: user.id,
+          browsed_teams_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+      }
+
       const { data, error } = await supabase
         .from('team_posts')
         .select('*')

@@ -14,6 +14,7 @@ import MyTeams from './pages/MyTeams'
 import EditTeam from './pages/EditTeam'
 import MyRequests from './pages/MyRequests'
 import Messages from './pages/Messages'
+import Onboarding from './pages/Onboarding'
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="/my-requests" element={<ProtectedRoute><MyRequests /></ProtectedRoute>} />
           <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/messages/:teamId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
         </Routes>
       </div>
       <Analytics />

@@ -19,6 +19,7 @@ function Signup() {
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/onboarding`,
         data: {
           full_name: fullName,
         },

@@ -131,6 +131,9 @@ function Navbar() {
                     <Link to="/profile" className={`block ${navigationLink}`}>
                       My Profile
                     </Link>
+                    <Link to="/onboarding" className={`block ${navigationLink}`}>
+                      Getting Started
+                    </Link>
                     <Link to="/my-teams" className={`block ${navigationLink}`}>
                       My Teams
                     </Link>
@@ -231,6 +234,10 @@ function Navbar() {
 
                 <Link to="/profile" className={navigationLink}>
                   My Profile
+                </Link>
+
+                <Link to="/onboarding" className={navigationLink}>
+                  Getting Started
                 </Link>
 
                 <Link to="/my-teams" className={navigationLink}>
